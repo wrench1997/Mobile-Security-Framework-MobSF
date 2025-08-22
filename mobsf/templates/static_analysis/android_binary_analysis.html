@@ -1,0 +1,2592 @@
+{% extends "base/base_layout.html" %}
+   {% load static %}
+     {% block sidebar_option %}
+      sidebar-mini
+     {% endblock %}
+    {% block extra_css %}
+    <link href="{% static "adminlte/plugins/sweetalert2/sweetalert2.min.css" %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "others/css/spinner.css" %}">
+    <link href="{% static "datatables/css/datatables.combined.min.css" %}" rel="stylesheet">
+    <style type="text/css" media="print">
+        @page { size: landscape; }
+        @media print {
+          .btn, #scan_options  {
+            display: none;
+          }
+        }
+    </style>
+    <style>
+          #app_icon{
+            width: 64px;
+            height: 64px;
+          }
+
+          #pre-wrap {
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            }
+    </style>
+    <script>
+      // 预加载
+      function dynamic_loader(){
+        var loadingOverlay = document.querySelector('.loading');
+        loadingOverlay.classList.remove('hidden');
+      }
+    </script>
+    {% endblock %}
+    {% block sidebar %}
+    <!--加载器-->
+<div class="hidden loading">
+  <div class='uil-ring-css' style='transform:scale(0.79);'>
+    <div></div>
+  </div>
+  </div>
+    <!-- 主侧边栏容器 -->
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <!-- 侧边栏用户面板（可选） -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="info">
+          <a href="#" class="d-block">静态分析器</a>
+        </div>
+      </div>
+
+      <!-- 侧边栏菜单 -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+          
+          <li class="nav-item">
+            <a href="#information" class="nav-link">
+              <i class="nav-icon fas fa-info-circle"></i>
+              <p>
+                信息
+              </p>
+            </a>
+          </li>
+           <li class="nav-item">
+            <a href="#scan_options" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+                扫描选项
+              </p>
+            </a>
+          </li>
+          {% if app_type not in 'so' %}
+          <li class="nav-item">
+            <a href="#certificate" class="nav-link">
+              <i class="nav-icon fas fa-certificate"></i>
+              <p>
+                签名证书
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#permissions" class="nav-link">
+              <i class="nav-icon fas fa-list"></i>
+              <p>
+                权限
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#android_api" class="nav-link">
+              <i class="nav-icon fab fa-android"></i>
+              <p>
+                Android API
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#browsable" class="nav-link">
+              <i class="nav-icon fas fa-clone"></i>
+              <p>
+                可浏览活动
+              </p>
+            </a>
+          </li>
+          {% endif %}
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-shield-alt"></i>
+              <p>
+                安全分析
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              {% if app_type not in 'so' %}
+              <li class="nav-item">
+                <a href="#network_security" class="nav-link">
+                  <i class="nav-icon fas fa-lock"></i>
+                  <p>
+                    网络安全
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#certificate_analysis" class="nav-link">
+                  <i class="nav-icon fa fa-id-card"></i>
+                  <p>
+                    证书分析
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#manifest" class="nav-link">
+                  <i class="fas fa-search nav-icon"></i>
+                  <p>清单分析</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#code_analysis" class="nav-link">
+                  <i class="fa fa-code nav-icon"></i>
+                  <p>代码分析</p>
+                </a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a href="#binary_analysis" class="nav-link">
+                  <i class="nav-icon fas fa-flag"></i>
+                  <p>二进制分析</p>
+                </a>
+              </li>
+              {% if app_type not in 'so' %}
+              <li class="nav-item">
+                <a href="#niap_analysis" class="nav-link">
+                  <i class="fa fa-id-badge nav-icon"></i>
+                  <p>NIAP 分析</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#file_analysis" class="nav-link">
+                  <i class="fa fa-file nav-icon"></i>
+                  <p>文件分析</p>
+                </a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a href="#firebase" class="nav-link">
+                  <i class="fas fa-database nav-icon"></i>
+                  <p>Firebase 分析</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-bug"></i>
+              <p>
+                恶意软件分析
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#malware_lookup" class="nav-link">
+                  <i class="fa fa-ban nav-icon"></i>
+                  <p>恶意软件查询</p>
+                </a>
+              </li>
+              {% if app_type not in 'so' %}
+              <li class="nav-item">
+                <a href="#apkid" class="nav-link">
+                  <i class="fas fa-fingerprint nav-icon"></i>
+                  <p>APKiD 分析</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#behaviour" class="nav-link">
+                  <i class="fas fa-sitemap nav-icon"></i>
+                  <p>行为分析</p>
+                </a>
+              </li>
+              {% endif %}
+               {% if virus_total %}
+              <li class="nav-item">
+                <a href="#virus_total" class="nav-link">
+                  <i class="fas fa-spider nav-icon"></i>
+                  <p>VirusTotal</p>
+                </a>
+              </li>
+              {% endif %}
+              {% if app_type not in 'so' %}
+              <li class="nav-item">
+                <a href="#malware_permissions" class="nav-link">
+                  <i class="fa fa-braille nav-icon"></i>
+                  <p>滥用权限</p>
+                </a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a href="#serverlocations" class="nav-link">
+                  <i class="fas fa-globe-asia nav-icon"></i>
+                  <p>服务器位置</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#malware_check" class="nav-link">
+                  <i class="fab fa-searchengin nav-icon"></i>
+                  <p>域名恶意软件检查</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+           <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-plus"></i>
+              <p>
+                侦察
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#urls" class="nav-link">
+                  <i class="fas fa-globe nav-icon"></i>
+                  <p>URL</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#emails" class="nav-link">
+                  <i class="fas fa-envelope nav-icon"></i>
+                  <p>电子邮件</p>
+                </a>
+              </li>
+              {% if app_type not in 'so' %}
+              <li class="nav-item">
+                <a href="#trackers" class="nav-link">
+                  <i class="fas fa-user-secret nav-icon"></i>
+                  <p>跟踪器</p>
+                </a>
+              </li>
+              {% endif %}
+              <li class="nav-item">
+                <a href="#secrets" class="nav-link">
+                  <i class="fas fa-key nav-icon"></i>
+                  <p>硬编码密钥</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#strings" class="nav-link">
+                  <i class="fas fa-font nav-icon"></i>
+                  <p>字符串</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          {% if app_type in 'so' %}
+          <li class="nav-item">
+            <a href="#symbols" class="nav-link">
+              <i class="fa fa-th nav-icon"></i>
+                <p>符号</p>
+            </a>
+          </li>
+          {% endif %}
+          {% if app_type not in 'so' %}
+           <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-th-large"></i>
+              <p>
+                组件
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="#activities" class="nav-link">
+                  <i class="fa fa-language nav-icon"></i>
+                  <p>活动</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#services" class="nav-link">
+                  <i class="fa fa-cogs nav-icon"></i>
+                  <p>服务</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#receivers" class="nav-link">
+                  <i class="fa fa-assistive-listening-systems nav-icon"></i>
+                  <p>接收器</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#providers" class="nav-link">
+                  <i class="fa fa-database nav-icon"></i>
+                  <p>提供者</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#libraries" class="nav-link">
+                  <i class="fab fa-buffer nav-icon"></i>
+                  <p>库</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#sbom" class="nav-link">
+                  <i class="fa fa-archive nav-icon"></i>
+                  <p>软件物料清单</p>
+                </a>
+              </li>
+               <li class="nav-item">
+                <a href="#files" class="nav-link">
+                  <i class="far fa-copy nav-icon"></i>
+                  <p>文件</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+            <li class="nav-item">
+              <a href="{% url "pdf" checksum=md5 %}" class="nav-link">
+              <i class="nav-icon fas fa-file-pdf"></i>
+              <p>
+                PDF 报告
+              </p>
+             </a>
+            </li>
+            <li class="nav-item">
+              <a href="javascript:window.print()" class="nav-link">
+              <i class="nav-icon fa fa-print"></i>
+              <p>
+                打印报告
+              </p>
+             </a>
+            </li>
+            {% if dynamic_analysis_done %}
+            <li class="nav-item">
+              <a href="{% url "dynamic_report" checksum=md5 %}" class="nav-link">
+              <i class="nav-icon fas fa-file-alt"></i>
+              <p>
+                动态分析报告
+              </p>
+             </a>
+            </li>
+            {% else %}
+              {% if app_type not in 'jar,aar,so' %}
+            <li class="nav-item">
+              <a onclick="dynamic_loader()" href="{% url "dynamic_analyzer" checksum=md5 %}" class="nav-link">
+              <i class="nav-icon fa fa-play-circle"></i>
+              <p>
+                开始动态分析
+              </p>
+             </a>
+            </li>
+              {% endif %}
+            {% endif %}
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+{% endblock %}
+{% block content %}
+  <!-- 内容包装器。包含页面内容 -->
+<div class="content-wrapper">
+  <!-- 内容标题（页面标题） -->
+  <div class="content-header">
+  <!--
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div id="mobsf_header" align="center">
+        </div>
+      </div>
+    </div>-->
+  </div>
+  <!-- /.content-header -->
+
+
+ <!-- 主要内容 -->
+<a id="information" class="anchor"></a>
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"></h5>
+                <div class="row">
+       
+                <div class="col-2">
+                  <p><strong><i class="fas fa-check-double"></i> 应用评分</strong></p>
+          {% if app_type not in 'so' %}
+                  <img id="app_icon" src="{% if icon_path %}/download/{{icon_path}}{% else %}{% static 'img/no_icon.png' %}{% endif %}"/>
+                  <p>
+                  {% if average_cvss %}
+                  <span class="badge bg-info">平均 CVSS</span> <strong>{{ average_cvss }} </strong><br/>
+                  {% endif %}
+                  <span class="badge bg-{% if appsec.security_score < 40 %}danger{% elif appsec.security_score == 100 %}success{% else %}warning{% endif %}">安全评分</span> <strong>{{ appsec.security_score }}/100 </strong><br/>
+           {% endif %}
+                  {% if trackers.detected_trackers > 0 %}
+                    <span class="badge bg-warning">跟踪器检测</span> <strong>{{ trackers.detected_trackers }}/{{ trackers.total_trackers }}</strong><br/>
+                  {% else %}
+                    <span class="badge bg-success">跟踪器检测</span> <strong>{{ trackers.detected_trackers }}/{{ trackers.total_trackers }}</strong><br/>
+                  {% endif %}
+                  {% if virus_total and virus_total.items|length > 9 %}
+                    {% if virus_total.positives > 0 %}
+                      <span class="badge bg-danger">VirusTotal 检测</span> <strong>{{ virus_total.positives }}/{{ virus_total.total }}</strong><br/>
+                    {% else %}
+                      <span class="badge bg-success">VirusTotal 检测</span> <strong>{{ virus_total.positives }}/{{ virus_total.total }}</strong><br/>
+                    {% endif %}
+                  {% endif %}
+                </p>
+                {% if app_type not in 'so' %}
+                  <p> <a href="{% url 'appsec_dashboard' checksum=md5 %}" class="btn btn-outline-primary btn-sm" role="button"><i class="fas fa-user-shield"></i> MobSF 记分卡</a></p>
+                {% endif %}
+                </div>
+   
+                <div class="col-6">
+                  <p><strong><i class="fas fa-box-open"></i> 文件信息 </strong></p>
+                  <span class="badge bg-primary">文件名</span>
+                  {{ file_name }}<br/>
+                  <span class="badge bg-primary">大小</span>
+                  {{ size }}<br/>
+                  <span class="badge bg-primary">MD5</span>
+                  {{ md5 }}<br/>
+                  <span class="badge bg-primary">SHA1</span>
+                  {{ sha1 }}<br/>
+                  <span class="badge bg-primary">SHA256</span>
+                  {{ sha256 }}<br/>
+                </div>
+                {% if app_type not in 'jar,aar,so' %}
+                <div class="col-4">
+                  <p><strong><i class="fas fa-info"></i> 应用信息 </strong></p>
+                  <span class="badge bg-primary">应用名称</span>
+                  {{ app_name }}<br/>
+                  <span class="badge bg-primary">包名</span>
+                  {{ package_name }}<br/>
+                  <span class="badge bg-primary">主活动</span>
+                  {{ main_activity }}<br/>
+                  <span class="badge bg-primary">目标 SDK</span>
+                  {{ target_sdk }}
+                  <span class="badge bg-primary">最低 SDK</span>
+                    {{ min_sdk }}
+                  <span class="badge bg-primary">最高 SDK</span>
+                    {{ max_sdk }}<br/>
+                  <span class="badge bg-primary">Android 版本名称</span>
+                  {{ version_name }}
+                <span class="badge bg-primary">Android 版本代码</span>
+                {{ version_code }}
+                </div>
+                {% endif %}
+              </div>
+
+            </div>
+          </div>
+          </div>
+          <!-- Play Store -->
+          {% if not playstore_details.error %}
+          <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+                <p>
+                <strong><i class="fab fa-google-play"></i> PLAY商店信息</strong>
+                </p>
+                    <span class="badge bg-info">标题</span>
+                      {{ playstore_details.title }} <br/>
+                    <span class="badge bg-info">评分</span>
+                      {{ playstore_details.score}}
+                    <span class="badge bg-info">安装量</span>
+                      {{ playstore_details.installs }}
+                    <span class="badge bg-info">价格</span>
+                        {{ playstore_details.price }}
+                    <span class="badge bg-info">Android 版本支持</span>
+                      {{ playstore_details.androidVersionText }}
+                      <span class="badge bg-info">类别</span>
+                      {{ playstore_details.genre }}
+                      <span class="badge bg-info">Play 商店 URL</span>
+                        <a target="_blank" href="{{ playstore_details.url }}" rel="noopener noreferrer"> {{ package_name }} </a>
+                    <br/>
+                    <span class="badge bg-info">开发者</span>
+                        {{playstore_details.developer}},
+                       <span class="badge bg-info">开发者 ID</span>
+                        {{playstore_details.developerId}} <br/>
+                        <span class="badge bg-info">开发者地址</span>
+                        {{playstore_details.developerAddress}} <br/>
+                        <span class="badge bg-info">开发者网站</span>
+                        {{playstore_details.developerWebsite}} <br/>
+                        <span class="badge bg-info">开发者邮箱</span>
+                        {{playstore_details.developerEmail}}
+                  <br/>
+                  <span class="badge bg-info">发布日期</span>
+                      {{ playstore_details.released }}
+                  <span class="badge bg-info">隐私政策</span>
+                  <a target="_blank" href="{{ playstore_details.privacyPolicy }}" rel="noopener noreferrer">隐私链接</a>
+                  <br/>
+                      <span class="badge bg-info">描述</span>
+                      <pre id="pre-wrap">{{ playstore_details.description }}</pre>
+            </div>
+          </div><!-- /.card -->
+          </div>
+          {% endif %}
+      <!-- /.col -->
+      <!-- row and container-->
+      </div>
+  </div>
+
+  {% if app_type not in 'jar,aar,so' %}
+  <!-- Boxes -->
+   <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"></h5>
+                <div class="row">
+                        <!-- Boxes columns -->
+                      <div class="col-12 col-sm-6 col-md-3">
+                        <!-- small box -->
+                        <div class="small-box bg-info">
+                          <div class="inner">
+                            <h3> {{ exported_count.exported_activities }} / {{ activities | length }}</h3>
+
+                            <p>导出的活动</p>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-language"></i>
+                          </div>
+                          <a href="#activities" class="small-box-footer">查看全部 <i class="fas fa-arrow-circle-down"></i></a>
+                        </div>
+                      </div>
+                      <!-- ./col -->
+                      <div class="col-12 col-sm-6 col-md-3">
+                        <!-- small box -->
+                        <div class="small-box bg-success">
+                          <div class="inner">
+                            <h3>{{ exported_count.exported_services }} / {{ services | length }}</h3>
+
+                            <p>导出的服务</p>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-cogs"></i>
+                          </div>
+                          <a href="#services" class="small-box-footer">查看全部 <i class="fas fa-arrow-circle-down"></i></a>
+                        </div>
+                      </div>
+                      <!-- ./col -->
+                      <div class="col-12 col-sm-6 col-md-3">
+                        <!-- small box -->
+                        <div class="small-box bg-warning">
+                          <div class="inner">
+                            <h3>{{ exported_count.exported_receivers }} / {{ receivers | length }}</h3>
+
+                            <p>导出的接收器</p>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-assistive-listening-systems"></i>
+                          </div>
+                          <a href="#receivers" class="small-box-footer">查看全部 <i class="fas fa-arrow-circle-down"></i></a>
+                        </div>
+                      </div>
+                      <!-- ./col -->
+                      <div class="col-12 col-sm-6 col-md-3">
+                        <!-- small box -->
+                        <div class="small-box bg-danger">
+                          <div class="inner">
+                            <h3>{{exported_count.exported_providers}} / {{ providers | length }}</h3>
+
+                            <p>导出的提供者</p>
+                          </div>
+                          <div class="icon">
+                            <i class="fa fa-database"></i>
+                          </div>
+                          <a href="#providers" class="small-box-footer">查看全部 <i class="fas fa-arrow-circle-down"></i></a>
+                        </div>
+                      <!-- /.row -->
+                    </div><!-- /.container-fluid -->
+                </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <!-- =========================信息结束==================================== -->
+
+<a id="scan_options" class="anchor"></a>
+<section class="content">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <p>
+                <strong><i class="fas fa-cog"></i> 扫描选项</strong>
+                </p>
+                <p> <a href="{% url 'static_analyzer' checksum=md5 %}?rescan=1" class="btn btn-info" role="button"><i class="fa fa-sync"></i> 重新扫描</a>
+                  {% if app_type in 'so' %}
+                  <a href="{% url "download_binary" checksum=md5 %}" class="btn btn-warning"> <i class="fa fa-download"></i> 下载 {{ app_type | upper}}</a>
+                  {% endif %}
+                  {% if app_type not in 'so' %}
+                  <a id="supbtn" onclick="list_suppressions()" role="button" class="btn btn-primary" data-target="#sup_list" data-toggle="modal" href="#"><i class="fa fa-table" aria-hidden="true"></i> 管理抑制规则</a>
+                  {% endif %}
+                </p>
+                <p>
+                {% if app_type not in 'jar,aar,so' %}
+                <a onclick="dynamic_loader()" href="{% url 'dynamic_analyzer' checksum=md5 %}" class="btn btn-success" role="button"><i class="fa fa-play-circle"></i> 开始动态分析</a>
+                {% endif %}
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target=".scan-logs-mdl"><i class="fa fa-list" aria-hidden="true"></i> 扫描日志</button>
+                 </p>
+
+              </div>
+            </div><!-- /.card -->
+            </div>
+            {% if app_type not in 'so' %}
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-body">
+                    <p>
+                    <strong><i class="fas fa-file-code"></i> 反编译代码</strong>
+                  </p>
+                  <p>
+                    {% if app_type not in 'jar' %}
+                    <a target="_blank" href="{% url "manifest_view" checksum=md5 %}?type={{ app_type }}" role="button" class="btn btn-primary"><i class="fa fa-eye"></i>  查看 AndroidManifest.xml</a>
+                    {% endif %}
+                    <a href="{% url "tree_view" %}?md5={{ md5 }}&amp;type=java" class="btn btn-info" role="button"><i class="fa fa-code"></i> 查看源代码</a>
+                    {% if app_type not in 'jar,aar' %}
+                    <a href="{% url "tree_view" %}?md5={{ md5 }}&amp;type=smali" class="btn btn-info" role="button"><i class="fa fa-code"></i> 查看 Smali</a>
+                    {% endif %}
+                    </p>
+                    <p>
+                    <a href="{% url 'generate_downloads' %}?hash={{ md5 }}&amp;file_type=java" class="btn btn-warning" role="button"> <i class="fa fa-download"></i> 下载 Java 代码</a>
+                    {% if app_type not in 'jar,aar' %}
+                    <a href="{% url 'generate_downloads' %}?hash={{ md5 }}&amp;file_type=smali" class="btn btn-warning"> <i class="fa fa-download"></i> 下载 Smali 代码</a>
+                    {% endif %}
+                    <a href="{% url "download_binary" checksum=md5 %}" class="btn btn-warning"> <i class="fa fa-download"></i> 下载 {{ app_type | upper}}</a>
+                    
+                  </p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- end row -->
+            </div>
+        </div>
+</section>
+  <!-- ===========================扫描选项结束================================== -->
+  {% if app_type not in 'so' %}
+<a id="certificate" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+              <p>
+                <strong><i class="fa fa-certificate"></i> 签名证书</strong>
+            </p>
+            {% if certificate_analysis %}
+              <pre><code>{{ certificate_analysis.certificate_info }}</code></pre>
+           {% else %}
+           无法读取代码签名证书。
+           {% endif %}
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+
+</section>
+ <!-- ===========================证书结束================================== -->
+<a id="permissions" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fa fa-list"></i> 应用权限</strong>
+             <p>
+             <div class="table-responsive">
+                  <table id="table_permissions" class="table table-bordered table-hover table-striped">
+                      <thead>
+                          <tr>
+                              <th>权限</th>
+                              <th>状态</th>
+                              <th>信息</th>
+                              <th>描述</th>
+                              <th>代码映射</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {% for perm,desc in permissions.items %}
+                          <tr>
+                          <td>{{ perm }}</td>
+                          <td>
+                          {% if desc.status == 'dangerous' %}
+                            <span class="badge bg-danger">危险</span>
+                          {% elif desc.status == 'normal' %}
+                            <span class="badge bg-info">正常</span>
+                          {% elif desc.status == 'signatureOrSystem' %}
+                            <span class="badge bg-warning">签名或系统</span>
+                          {% elif desc.status == 'signature' %}
+                            <span class="badge bg-success">签名</span>
+                          {% elif desc.status == 'unknown' %}
+                            <span class="badge bg-secondary">未知</span>
+                          {% endif %}
+                          </td>
+                          <td>{{ desc.info }}</td>
+                          <td>{{ desc.description }}</td>
+                          <td>
+                            {% if perm in permission_mapping %}
+                              <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapseperm{{forloop.counter}}" role="button" aria-expanded="false" aria-controls="collapseperm{{forloop.counter}}">
+                                显示文件
+                              </a>
+                              <div class="collapse" id="collapseperm{{forloop.counter}}">
+                                {% for k, v in permission_mapping.items %}
+                                  {% if k == perm %}
+                                    {% for file_path, lines in v.items %}
+                                      <small>
+                                        <a href="{% url "view_source" %}?file={{ file_path }}&amp;md5={{ md5 }}&amp;type={{app_type}}&amp;lines={{ lines }}"> {{ file_path }}</a>
+                                      </small>
+                                      </br>
+                                    {% endfor %}
+                                  {% endif %}
+                                {% endfor %}
+                              </div>
+                            {% endif %}
+                          </td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+
+           </div>
+
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================权限结束================================== -->
+   <a id="android_api" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+              <p>
+             <strong><i class="fab fa-android"></i> ANDROID API</strong>
+             </p>
+              <div class="table-responsive">
+                <table id="table_so" class="table table-bordered table-hover table-striped">
+                   <thead>
+                      <tr>
+                        <th>API</th>
+                        <th>文件</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                   {% for rule, details in android_api.items %}
+                  <tr>
+                    <td>
+                    {{ details.metadata.description }}
+                    </td>
+                    <td>
+                      <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapseapi{{forloop.counter}}" role="button" aria-expanded="false" aria-controls="collapseapi{{forloop.counter}}">
+                        显示文件
+                      </a>
+                      <div class="collapse" id="collapseapi{{forloop.counter}}">
+                        {% for file_path, lines in details.files.items %}
+                          <small>
+                            <a href="{% url "view_source" %}?file={{ file_path }}&amp;md5={{ md5 }}&amp;type={{app_type}}&amp;lines={{ lines }}"> {{ file_path }}</a>
+                          </small>
+                        </br>
+                        {% endfor %}
+                      </div>
+                    </td>
+                  </tr>    
+                    {% endfor %} 
+                  </tbody>
+                  </table>
+                  </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================API分析结束================================== -->
+ <a id="browsable" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+              <p>
+             <strong><i class="fas fa-clone"></i> 可浏览活动</strong>
+             </p>
+              <div class="table-responsive">
+                <table id="table_browsable" class="table table-bordered table-hover table-striped">
+                    <thead>
+                          <tr>
+                              <th>活动</th>
+                              <th>意图</th>   
+                          </tr>
+                      </thead>
+                      <tbody>
+                      {% for activity,intent_details in browsable_activities.items %}
+                          <tr>
+                            <td>{{activity}}</td>
+                            <td>
+                                   {% if intent_details|key:"schemes" %}
+                                      <strong>方案</strong>: 
+                                      {% for scheme in intent_details|key:"schemes" %}
+                                        {{scheme}},
+                                      {% endfor %}
+                                       <br/>
+                                   {% endif %}
+                                   {% if intent_details|key:"hosts" %}
+                                      <strong>主机:</strong> {% for host in intent_details|key:"hosts" %}
+                                        {{host}},
+                                      {% endfor %} 
+                                      <br/>
+                                   {% endif %}
+                                   {% if intent_details|key:"ports" %}
+                                      <strong>端口:</strong> {% for port in intent_details|key:"ports" %}
+                                        {{port}},
+                                      {% endfor %} 
+                                      <br/>
+                                   {% endif %}
+                                   {% if intent_details|key:"mime_types" %}
+                                      <strong>MIME类型:</strong> {% for mime in intent_details|key:"mime_types" %}
+                                        {{mime}},
+                                      {% endfor %} 
+                                      <br/>
+                                   {% endif %}
+                                   {% if intent_details|key:"paths" %}
+                                      <strong>路径:</strong> {% for path in intent_details|key:"paths" %}
+                                        {{path}},
+                                      {% endfor %} 
+                                      <br/>
+                                   {% endif %}
+                                   {% if intent_details|key:"path_prefixs" %}
+                                      <strong>路径前缀:</strong> {% for prefix in intent_details|key:"path_prefixs" %}
+                                        {{prefix}},
+                                      {% endfor %} 
+                                      <br/>
+                                   {% endif %}
+                                   {% if intent_details|key:"path_patterns" %}
+                                      <strong>路径模式:</strong> {% for pattern in intent_details|key:"path_patterns" %}
+                                        {{pattern}},
+                                      {% endfor %} 
+                                      <br/>
+                                   {% endif %}
+                              {% endfor %}
+                            </td>
+                          </tr>
+                    </tbody>
+                  </table>
+                  </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================可浏览活动结束================================== -->
+ <a id="network_security" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-lock"></i> 网络安全</strong>
+             </p>
+              <div class="table-responsive">
+                {% if network_security and 'network_summary' in network_security and network_security.network_summary|length > 0  %}
+                  <div class="row">
+                    <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                    <span class="text-danger">高风险</span>
+                    <h5 class="description-header">{{ network_security.network_summary.high }}</h5>
+                    </div>
+                    </div>
+                    
+                    <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                    <span class="text-warning"></i> 警告</span>
+                    <h5 class="description-header">{{ network_security.network_summary.warning }}</h5>
+                    </div>
+                    
+                    </div>
+                    
+                    <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                    <span class="text-info">信息</span>
+                    <h5 class="description-header">{{ network_security.network_summary.info }}</h5>
+                    </div>
+                    
+                    </div>
+
+                    <div class="col-sm-3 col-6">
+                      <div class="description-block">
+                      <span class="text-success">安全</span>
+                      <h5 class="description-header">{{ network_security.network_summary.secure }}</h5>
+                      </div>
+                      
+                      </div>
+                      
+                    
+                    </div>
+                    {% endif %}
+                <table id="table_network" class="table table-bordered table-hover table-striped">
+                      <thead>
+                      <tr>
+                          <th>序号</th>
+                          <th>范围</th>
+                          <th>严重性</th>
+                          <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if network_security and 'network_findings' in network_security %}
+                    {% for item in network_security.network_findings %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                         {% for url in item.scope %}
+                          {{ url }}</br>
+                        {% endfor %}
+                        </td>
+                        <td>
+                          {% if item.severity == "high" %}
+                            <span class="badge bg-danger">高风险</span>
+                          {% elif item.severity == "secure" %}
+                            <span class="badge bg-success">安全</span>
+                          {% elif item.severity == "info" %}
+                            <span class="badge bg-info">信息</span>
+                          {% elif item.severity == "warning" %}
+                            <span class="badge bg-warning">警告</span>
+                          {% endif %}
+                        </td>
+                        <td>
+                        {{item.description }}
+                        </td>
+                       </tr>
+                     {% endfor %}
+                     {% endif %}
+                    </tbody>
+                  </table>
+                  
+                    
+                  </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================网络安全结束================================== -->
+
+
+ <a id="certificate_analysis" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fa fa-id-card"></i> 证书分析</strong>
+             </p>
+              <div class="table-responsive">
+                {% if certificate_analysis and 'certificate_summary' in certificate_analysis and certificate_analysis.certificate_summary|length > 0  %}
+                <div class="row">
+                  <div class="col-sm-3 col-6">
+                  <div class="description-block border-right">
+                  <span class="text-danger">高风险</span>
+                  <h5 class="description-header">{{ certificate_analysis.certificate_summary.high }}</h5>
+                  </div>
+                  </div>
+                  
+                  <div class="col-sm-3 col-6">
+                  <div class="description-block border-right">
+                  <span class="text-warning"></i> 警告</span>
+                  <h5 class="description-header">{{ certificate_analysis.certificate_summary.warning }}</h5>
+                  </div>
+                  
+                  </div>
+                  
+                  <div class="col-sm-3 col-6">
+                  <div class="description-block">
+                  <span class="text-info">信息</span>
+                  <h5 class="description-header">{{ certificate_analysis.certificate_summary.info }}</h5>
+                  </div>
+                  
+                  </div>
+                  
+                  </div>
+                  {% endif %}
+                <table id="table_cert" class="table table-bordered table-hover table-striped">
+                  <thead>
+                      <tr>
+                          <th>标题</th>
+                          <th>严重性</th>
+                          <th>描述</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% if certificate_analysis and 'certificate_findings' in certificate_analysis %}
+                      {% for find in certificate_analysis.certificate_findings %}
+                      <tr>
+                      <td>{{ find.2 }}</td>
+                      <td>
+                      {% if find.0 == 'high' %}
+                        <span class="badge bg-danger">高风险</span>
+                      {% elif find.0  == 'secure' %}
+                        <span class="badge bg-success">安全</span>
+                      {% elif find.0  == 'warning' %}
+                        <span class="badge bg-warning">警告</span>
+                      {% elif find.0  == 'info' %}
+                        <span class="badge bg-info">信息</span>
+                      {% endif %}
+                      </td>
+                      <td>{{ find.1 }}</td>
+                      </tr>
+                      {% endfor %}
+                    {% endif %}
+                  </tbody>
+              </table>
+              
+              </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================证书分析结束================================== -->
+ <a id="manifest" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-search"></i> 清单分析</strong>
+             </p>
+              <div class="table-responsive">
+                {% if manifest_analysis and 'manifest_summary' in manifest_analysis and manifest_analysis.manifest_summary|length > 0%}
+                  <div class="row">
+                    <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                    <span class="text-danger">高风险</span>
+                    <h5 class="description-header">{{ manifest_analysis.manifest_summary.high }}</h5>
+                    </div>
+                    </div>
+                    
+                    <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                    <span class="text-warning"></i> 警告</span>
+                    <h5 class="description-header">{{ manifest_analysis.manifest_summary.warning }}</h5>
+                    </div>
+                    
+                    </div>
+                    
+                    <div class="col-sm-3 col-6">
+                    <div class="description-block border-right">
+                    <span class="text-info">信息</span>
+                    <h5 class="description-header">{{ manifest_analysis.manifest_summary.info }}</h5>
+                    </div>
+                    
+                    </div>
+
+                    <div class="col-sm-3 col-6">
+                      <div class="description-block">
+                      <span class="text-disabled">已抑制</span>
+                      <h5 class="description-header">{{ manifest_analysis.manifest_summary.suppressed }}</h5>
+                      </div>
+                      
+                      </div>
+                      
+                    
+                    </div>
+                    {% endif %}
+                <table id="table_manifest" class="table table-bordered table-hover table-striped">
+                      <thead>
+                      <tr>
+                          <th>序号</th>
+                          <th>问题</th>
+                          <th>严重性</th>
+                          <th>描述</th>
+                          <th>选项</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if manifest_analysis and 'manifest_findings' in manifest_analysis %}
+                    {% for item in manifest_analysis.manifest_findings %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                        {{item|key:"title" | safe}}
+                        </td>
+                        <td>
+
+                          {% if item|key:"severity" == "high" %}
+                            <span class="badge bg-danger">高风险</span>
+                          {% elif item|key:"severity" == "info" %}
+                            <span class="badge bg-info">信息</span>
+                          {% elif item|key:"severity" == "warning" %}
+                            <span class="badge bg-warning">警告</span>
+                          {% endif %}
+                         
+                        </td>
+                        <td>
+                        {{item|key:"description"}}
+                        </td>
+                        <td>
+                          <div class="dropdown show">
+                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <i class="fa fa-eye-slash"></i>
+                            </a>
+      
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                              <a style="cursor:pointer;" class="dropdown-item" onclick="suppress('{{ item|key:"title" | android_component}}{{item|key:'rule' | escapejs }}', false, $(this.closest('tr')), true)">在 <b>{{package_name}}</b> 中抑制规则 <b>{{ item|key:"title" | android_component}}{{ item|key:'rule' }}</b></a>
+                            </div>
+                          </div>
+                        </td>
+                       </tr>
+                     {% endfor %}
+                     {% endif %}
+                    </tbody>
+                  </table>
+                  
+
+                  </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================清单分析结束================================== -->
+  <a id="code_analysis" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-code"></i> 代码分析</strong>
+             </p>
+              <div class="table-responsive">
+                {% if code_analysis and 'summary' in code_analysis and code_analysis.summary|length > 0  %}
+            <div class="row">
+              <div class="col-sm-2 col-6">
+              <div class="description-block border-right">
+              <span class="text-danger">高风险</span>
+              <h5 class="description-header">{{ code_analysis.summary.high }}</h5>
+              </div>
+              </div>
+              
+              <div class="col-sm-2 col-6">
+              <div class="description-block border-right">
+              <span class="text-warning"></i> 警告</span>
+              <h5 class="description-header">{{ code_analysis.summary.warning }}</h5>
+              </div>
+              
+              </div>
+              
+              <div class="col-sm-2 col-6">
+              <div class="description-block border-right">
+              <span class="text-info">信息</span>
+              <h5 class="description-header">{{ code_analysis.summary.info }}</h5>
+              </div>
+              
+              </div>
+              
+              <div class="col-sm-2 col-6">
+                <div class="description-block border-right">
+                <span class="text-success">安全</span>
+                <h5 class="description-header">{{ code_analysis.summary.secure }}</h5>
+                </div>
+                
+                </div>
+
+              <div class="col-sm-2 col-6">
+                <div class="description-block">
+                <span class="text-disabled">已抑制</span>
+                <h5 class="description-header">{{ code_analysis.summary.suppressed }}</h5>
+                </div>
+                
+                </div>
+                
+              
+              </div>
+              {% endif %}
+                <table id="table_code" class="table table-bordered table-hover table-striped">
+                    <thead>
+                    <tr>
+                      <th>序号</th>
+                      <th>问题</th>
+                      <th>严重性</th>
+                      <th>标准</th>
+                      <th>文件</th>
+                      <th>选项</th>
+                  </tr>
+                    </thead>
+                      <tbody>
+               {% if code_analysis and 'findings' in code_analysis %}
+               {% for rule, details in code_analysis.findings.items %}
+                  <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>
+                    {% if details.metadata|key:"ref" %}
+                      <a href="{{details.metadata.ref}}" target="_blank" rel="noopener"> {{ details.metadata.description }}</a>
+                    {% else %}
+                      {{ details.metadata.description }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if details.metadata.severity == "high" %}
+                      <span class="badge bg-danger">高风险</span>
+                      {% elif details.metadata.severity == "good" %}
+                      <span class="badge bg-success">安全</span>
+                      {% elif details.metadata.severity == "warning" %}
+                      <span class="badge bg-warning">警告</span>
+                      {% elif details.metadata.severity == "info" %}
+                      <span class="badge bg-info">信息</span>
+                      {% endif %}
+                  </td>
+                  <td>
+                      {% if average_cvss %}
+                        <strong>CVSS V2:</strong>
+                        {{ details.metadata.cvss }}
+                        {% if details.metadata.cvss > 6 %}
+                          (高)
+                        {% elif details.metadata.cvss == 0 %}
+                          (信息)
+                        {% elif details.metadata.cvss >= 4 %}
+                          (中)
+                        {% elif details.metadata.cvss < 4 %}
+                          (低)
+                        {% endif %}
+                        </br>
+                      {% endif %}
+                      {% if details.metadata.cwe %} <strong>CWE: </strong>{{ details.metadata.cwe }}{% endif %}
+                      {% if details.metadata|key:"owasp-mobile" %}</br> <strong>OWASP Top 10: </strong>{{ details.metadata|key:"owasp-mobile" }}{% endif %}
+                      {% if details.metadata.masvs %}</br> <strong>OWASP MASVS: </strong>{{ details.metadata.masvs }}{% endif %}
+                  </td>
+                  <td>
+                    {% if details.files|length < 4 %}
+                      {% for file_path, lines in details.files.items %}
+                        <small>
+                          <a href="{% url "view_source" %}?file={{ file_path }}&amp;md5={{ md5 }}&amp;type={{app_type}}&amp;lines={{ lines}}"> {{ file_path }}</a>
+                        </small>
+                      </br>
+                      {% endfor %}
+                    {% else %}
+                      <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapsecode{{forloop.counter}}" role="button" aria-expanded="false" aria-controls="collapsecode{{forloop.counter}}">
+                        显示文件
+                      </a>
+                      <div class="collapse" id="collapsecode{{forloop.counter}}">
+                        {% for file_path, lines in details.files.items %}
+                          <small>
+                            <a href="{% url "view_source" %}?file={{ file_path }}&amp;md5={{ md5 }}&amp;type={{app_type}}&amp;lines={{ lines}}"> {{ file_path }}</a>
+                          </small>
+                        </br>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </td>
+                  <td>
+
+                    <div class="dropdown show">
+                      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-eye-slash"></i>
+                      </a>
+                    
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a style="cursor:pointer;" class="dropdown-item" onclick="suppress('{{rule | escapejs }}', false, $(this.closest('tr')))">在 <b>{{package_name}}</b> 中抑制规则 <b>{{ rule }}</b></a>
+                        <a style="cursor:pointer;" class="dropdown-item" onclick="suppress('{{rule | escapejs }}', true, $(this.closest('tr')))">仅在这些文件中抑制 <b>{{package_name}}</b> 的规则 <b>{{ rule }}</b></a>
+                      </div>
+                    </div>
+
+                  </td>
+                </tr>    
+              {% endfor %}
+              {% endif %}
+              </tbody>
+            </table>
+            
+
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================代码分析结束================================== -->
+ {% endif %}
+ <a id="binary_analysis" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+              <p>
+             <strong><i class="fa fa-flag"></i> 共享库二进制分析</strong>
+             </p>
+              <div class="table-responsive">
+              <table id="table_binary" class="table table-bordered table-hover table-striped">
+                  <thead>
+                      <tr>
+                         {% if app_type not in 'so' %}
+                          <th>序号</th>
+                          <th>共享对象</th>
+                         {% endif %}
+                          <th>NX</th>
+                          <th>PIE</th>
+                          <th>堆栈保护</th>
+                          <th>RELRO</th>
+                          <th>RPATH</th>
+                          <th>RUNPATH</th>
+                          <th>FORTIFY</th>
+                          <th>符号剥离</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+            {% if not binary_analysis %}
+              未找到共享对象。
+            {% endif %}
+             {% for so in binary_analysis %}
+             <tr>
+              {% if app_type not in 'so' %}
+              <td>{{ forloop.counter }}</td>
+              <td>{{so.name | relative_path}}</br>
+                <a class="btn btn-primary btn-xs" href="{% url 'scan_library' checksum=md5 %}?library={{ so.name }}" target="_blank" rel="noopener noreferrer"><i class="fa fa-search"></i> 分析</a> 
+              </td>
+              {% endif %}
+              <td><b>{{so.nx.is_nx}}</b>
+                <br/>
+                <span class="badge bg-{% if so.nx.severity == 'high' %}danger{% elif so.nx.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.nx.severity}}</span>
+                <br/>{{so.nx.description}}</td>
+              <td><b>{{so.pie.is_pie}}</b>
+                  <br/>
+                  <span class="badge bg-{% if so.pie.severity == 'high' %}danger{% elif so.pie.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.pie.severity}}</span>
+                  <br/>{{so.pie.description}}</td>
+              <td><b>{{so.stack_canary.has_canary}}</b>
+                  <br/>
+                  <span class="badge bg-{% if so.stack_canary.severity == 'high' %}danger{% elif so.stack_canary.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.stack_canary.severity}}</span>
+                  <br/>{{so.stack_canary.description}}</td>
+              <td><b>{{so.relocation_readonly.relro}}</b>
+                <br/>
+                <span class="badge bg-{% if so.relocation_readonly.severity == 'high' %}danger{% elif so.relocation_readonly.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.relocation_readonly.severity}}</span>
+                <br/>{{so.relocation_readonly.description}}</td>
+              <td><b>{{so.rpath.rpath}}</b>
+                <br/>
+                <span class="badge bg-{% if so.rpath.severity == 'high' %}danger{% elif so.rpath.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.rpath.severity}}</span>
+                <br/>{{so.rpath.description}}</td>
+              <td><b>{{so.runpath.runpath}}</b>
+                <br/>
+                <span class="badge bg-{% if so.runpath.severity == 'high' %}danger{% elif so.runpath.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.runpath.severity}}</span>
+                <br/>{{so.runpath.description}}</td>
+              <td><b>{{so.fortify.is_fortified}}</b>
+                <br/>
+                <span class="badge bg-{% if so.fortify.severity == 'high' %}danger{% elif so.fortify.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.fortify.severity}}</span>
+                <br/>{{so.fortify.description}}</td>
+              <td><b>{{so.symbol.is_stripped}}</b>
+                <br/>
+                <span class="badge bg-{% if so.symbol.severity == 'high' %}danger{% elif so.symbol.severity == 'warning' %}warning{% else %}info{% endif %}">{{so.symbol.severity}}</span>
+                <br/>{{so.symbol.description}}</td>
+            </tr>
+             {% endfor %}
+                    </tbody>
+                    </table>
+                  </div>
+              
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================二进制分析结束================================== -->
+ {% if app_type not in 'so' %}
+ <a id="niap_analysis" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fa fa-id-badge"></i> NIAP 分析 v1.3</strong>
+             </p>
+              <div class="table-responsive">
+                <table id="table_file" class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>标识符</th>
+                            <th>要求</th>
+                            <th>功能</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                  {% for iden, details in niap_analysis.items %}
+                    <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                      <span class="badge {% if 'does not' in details.choice %} bg-warning {% elif 'not in accordance' in details.choice %} bg-danger {% else %} bg-info {% endif %}"> {{ iden }}</span>
+                    </td>
+                     <td>
+                     {{ details.class }}
+                    </td>
+                    <td>
+                      {{ details.description }}
+                     </td>
+                     <td>
+                      {{ details.choice }}
+                     </td>
+                  </tr>    
+                {% endfor %} 
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+<!-- ===========================NIAP分析结束================================== -->
+<a id="file_analysis" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fa fa-file"></i> 文件分析</strong>
+             </p>
+              <div class="table-responsive">
+                <table id="table_file" class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>问题</th>
+                            <th>文件</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                  {% for item in file_analysis %}
+                    <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                    {{ item|key:"finding" }}
+                    </td>
+                     <td>
+                     {% for cert_f in item|key:"files" %}
+                      {{ cert_f }}<br />
+                     {% endfor %} 
+                    </td>
+                  </tr>    
+                {% endfor %} 
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================文件分析结束================================== -->
+ {% endif %}
+ <a id="firebase" class="anchor"></a>
+ <section class="content">
+   <div class="container-fluid">
+     <div class="row">
+         <div class="col-lg-12">
+         <div class="card">
+           <div class="card-body">
+             <p>
+              <strong><i class="fas fa-database"></i> FIREBASE 数据库分析</strong>
+              </p>
+               <div class="table-responsive">
+              <table id="table_firebase" class="table table-bordered table-hover table-striped">
+                <thead>
+                  <tr>
+                      <th>标题</th>
+                      <th>严重性</th>
+                      <th>描述</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for find in firebase_urls %}
+                  <tr>
+                  <td>{{ find.title }}</td>
+                  <td>
+                  {% if find.severity == 'high' %}
+                    <span class="badge bg-danger">高风险</span>
+                  {% elif find.severity  == 'secure' %}
+                    <span class="badge bg-success">安全</span>
+                  {% elif find.severity  == 'warning' %}
+                    <span class="badge bg-warning">警告</span>
+                  {% elif find.severity  == 'info' %}
+                    <span class="badge bg-info">信息</span>
+                  {% endif %}
+                  </td>
+                  <td>{{ find.description }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+             </table>
+             </div>
+           </div>
+         </div><!-- /.card -->
+         </div>
+         <!-- end row -->
+         </div>
+     </div>
+ </section>
+  <!-- ===========================Firebase数据库分析结束================================== -->
+ <!---恶意软件分析部分-->
+ <a id="malware_lookup" class="anchor"></a>
+ <section class="content">
+   <div class="container-fluid">
+     <div class="row">
+         <div class="col-lg-12">
+         <div class="card">
+           <div class="card-body">
+             <p>
+              <strong><i class="fa fa-ban"></i> 恶意软件查询</strong>
+              </p>
+                <div class="table-responsive">
+               <div class="row">
+                <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                <span class="text-danger"><a href="https://www.virustotal.com/gui/file/{{ sha256 }}" target="_blank" rel="noopener"><i class="fa fa-eye"></i> VirusTotal 报告</a></span>
+                </div>
+                </div>
+                
+                <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                <span class="text-warning"></i><a href="https://tria.ge/s?q={{ sha256 }}" target="_blank" rel="noopener"><i class="fa fa-eye"></i> Triage 报告</a>
+                </span>
+                </div>
+                </div>
+                
+                <div class="col-sm-3 col-6">
+                <div class="description-block border-right">
+                <span class="text-info"><a href="https://metadefender.com/results/hash/{{ sha256 }}" target="_blank" rel="noopener"><i class="fa fa-eye"></i> MetaDefender 报告</a>
+                </span>
+                </div>
+                </div>
+                
+                <div class="col-sm-3 col-6">
+                  <div class="description-block border-right">
+                  <span class="text-success"><a href="https://www.hybrid-analysis.com/search?query={{ sha256 }}" target="_blank" rel="noopener"><i class="fa fa-eye"></i> Hybrid Analysis 报告</a>
+                  </span>
+                  </div>
+                </div>
+              </div>
+           </div>
+         </div><!-- /.card -->
+         </div>
+         <!-- end row -->
+         </div>
+     </div>
+ </section>
+ <!-- ===========================恶意软件查询结束================================== -->
+ {% if app_type not in 'so' %}
+ <!---APKiD分析部分-->
+ <a id="apkid" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-fingerprint"></i> APKiD 分析</strong>
+             </p>
+              <div class="table-responsive">
+                <table id="table_apkid" class="table table-bordered table-hover table-striped">
+                  <thead>
+                      <tr>
+                          <th>DEX</th>
+                          <th>检测结果</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% if apkid and app_type not in 'jar,aar'%}
+                       {% for file, details in apkid.items %}
+                       <tr>
+                         <td>
+                             {{file}}
+                        </td>
+                        <td>
+                            <table class="table table-bordered table-hover table-striped">
+                              <thead>
+                                  <tr>
+                                      <th>发现</th>
+                                      <th>详情</th>
+                                  </tr>
+                              </thead>
+                            <tbody>
+                            {% for detail, idens in details.items %}
+                            <tr>
+                              <td>
+                               {% if detail == "anti_vm" %}
+                               <span class="badge bg-warning">反虚拟机代码</span>
+                               {% elif detail == "anti_disassembly" %}
+                               <span class="badge bg-warning">反反汇编代码</span>
+                               {% elif detail == "anti_debug" %}
+                               <span class="badge bg-warning">反调试代码</span>
+                               {% elif detail == "compiler" %}
+                               <span class="badge bg-info">编译器</span>
+                               {% elif detail == "abnormal" %}
+                               <span class="badge bg-warning">异常代码</span>
+                               {% elif detail == "obfuscator" %}
+                               <span class="badge bg-warning">混淆器</span>
+                               {% elif detail == "protector" %}
+                               <span class="badge bg-info">保护器</span>
+                               {% elif detail == "packer" %}
+                               <span class="badge bg-danger">发现打包器</span>
+                               {% elif detail == "dropper" %}
+                               <span class="badge bg-danger">发现投递器</span>
+                               {% elif detail == "manipulator" %}
+                               <span class="badge bg-warning">发现操纵器</span>
+                               {% else %}
+                               <span class="badge bg-info">{{detail}}</span>
+                               {% endif %}
+                            </td>
+                              <td> {% for idn in idens %} {{ idn }}<br/> {% endfor %}</td>
+                            </tr>
+                            {% endfor %}
+                           </tbody>
+                            </table>
+                        </td>
+                 
+                        </tr>
+                         {% endfor %}
+                      {% else %}
+                      <p align="center"><strong>APKiD 未启用。</strong></p>
+                      {% endif %}
+                    </tbody>
+                            
+            </table>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================APKiD分析结束================================== -->
+  <a id="behaviour" class="anchor"></a>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <p>
+               <strong><i class="fas fa-sitemap"></i> 行为分析</strong>
+               </p>
+               <div class="table-responsive">
+
+                <table id="table_code" class="table table-bordered table-hover table-striped">
+                  <thead>
+                  <tr>
+                    <th>规则ID</th>
+                    <th>行为</th>
+                    <th>标签</th>
+                    <th>文件</th>
+                </tr>
+                  </thead>
+                    <tbody>
+             {% for rule, details in behaviour.items %}
+                <tr>
+                <td>{{ rule }}</td>
+                <td>
+                  {{ details.metadata.description }}
+                </td>
+                <td> {% for lbl in details.metadata.label %} 
+                  <span class="badge bg-warning">{{ lbl }}</span>
+                {% endfor %}
+                </td>
+                <td>
+                  {% if details.files|length < 4 %}
+                    {% for file_path, lines in details.files.items %}
+                      <small>
+                        <a href="{% url "view_source" %}?file={{ file_path }}&amp;md5={{ md5 }}&amp;type={{app_type}}&amp;lines={{ lines }}"> {{ file_path }}</a>
+                      </small>
+                    </br>
+                    {% endfor %}
+                  {% else %}
+                    <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#collapsebehaviour{{forloop.counter}}" role="button" aria-expanded="false" aria-controls="collapsebehaviour{{forloop.counter}}">
+                      显示文件
+                    </a>
+                    <div class="collapse" id="collapsebehaviour{{forloop.counter}}">
+                      {% for file_path, lines in details.files.items %}
+                        <small>
+                          <a href="{% url "view_source" %}?file={{ file_path }}&amp;md5={{ md5 }}&amp;type={{app_type}}&amp;lines={{ lines }}"> {{ file_path }}</a>
+                        </small>
+                      </br>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </td>
+              </tr>    
+            {% endfor %}
+            </tbody>
+          </table>
+              </div>
+            </div>
+          </div><!-- /.card -->
+          </div>
+          <!-- end row -->
+          </div>
+      </div>
+  </section>
+<!-- ===========================行为分析结束================================== -->
+{% endif %}
+{% if virus_total %}
+<a id="virus_total" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-spider"></i> VIRUSTOTAL 扫描</strong>
+             </p>
+               <div class="table-responsive">
+                 {% if virus_total.items|length < 9 %} {% comment %} 基本检查以确定响应是消息还是结果 {% endcomment %}
+                    <p align="left">&nbsp;&nbsp;<strong>{{ virus_total.verbose_msg }}</strong></p>
+                 {% else %}
+                    <p align="left">&nbsp;&nbsp;<strong> {{ virus_total.positives }} / {{ virus_total.total }}&nbsp; 个杀毒软件认为此文件是恶意的！ </strong> &nbsp;&nbsp;<a href="{{ virus_total.permalink }}" target="_blank" rel="noopener"><i class="fas fa-th-list"></i> 完整报告</a></p>
+                    {% if virus_total.positives > 0 %}
+                        <table id="table_vt" class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>杀毒软件</th>
+                                    <th>检测结果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for av_name,av_result in virus_total.scans.items %}
+                                {% if av_result.detected == True %}
+                                   <tr>
+                                        <td>
+                                            {{ av_name }}
+                                        </td>
+                                       <td>
+                                            <span class="badge bg-danger">{{ av_result.result }}</span>
+                                        </td>
+                                  </tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}{% comment %} if results.positive > 0 {% endcomment %}
+                     {% endif %}{% comment %} if this is the upload msg or a result {% endcomment %}
+                 </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+<!-- ===========================VirusTotal结束================================== -->
+{% endif %}
+<a id="malware_permissions" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fa fa-braille"></i> 滥用权限</strong>
+             </p>
+              <div class="table-responsive">
+                
+                {% if malware_permissions %}
+              
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm">
+                <div class="progress-group">
+                  <strong>顶级恶意软件权限</strong>
+                  <span class="float-right"><b>{{ malware_permissions.top_malware_permissions | length}}</b>/{{malware_permissions.total_malware_permissions}}</span>
+                  <div class="progress progress-sm">
+                  <div class="progress-bar bg-danger" aria-valuemin="0" style="width: {% widthratio malware_permissions.top_malware_permissions|length malware_permissions.total_malware_permissions 100 %}%;" aria-valuenow="{{ malware_permissions.top_malware_permissions | length}}" aria-valuemax="{{malware_permissions.total_malware_permissions}}"></div>
+                </div>
+                  <span class="product-description">
+                      {{ malware_permissions.top_malware_permissions | join:", "}}
+                    </span>  
+                </div>
+              </div>
+              <div class="col-sm">
+                <div class="progress-group">
+                  <strong>其他常见权限</strong>
+                  <span class="float-right"><b>{{ malware_permissions.other_abused_permissions | length}}</b>/{{ malware_permissions.total_other_permissions}}</span>
+                  <div class="progress progress-sm">
+                  <div class="progress-bar bg-warning" aria-valuemin="0" style="width: {% widthratio malware_permissions.other_abused_permissions|length malware_permissions.total_other_permissions 100 %}%;" aria-valuenow="{{ malware_permissions.other_abused_permissions | length}}" aria-valuemax="{{ malware_permissions.total_other_permissions}}"></div>
+                </div>
+                <span class="product-description">
+                  {{ malware_permissions.other_abused_permissions | join:", "}}
+                  </span>
+                  </div>
+                  </div>
+                 </div>
+                </div>
+                <hr>
+                <p>
+                  <strong>恶意软件权限</strong>是被已知恶意软件广泛滥用的顶级权限。
+                  <br/>
+                  <strong>其他常见权限</strong>是被已知恶意软件常常滥用的权限。
+                </p>
+                 {% endif %}
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================恶意软件权限结束================================== -->
+<style>
+  #chartdiv {
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+}
+</style>
+ <a id="serverlocations" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-globe-asia"></i> 服务器位置</strong>
+             </p>
+              <div class="table-responsive">
+                <div id="chartdiv"></div>
+            </div>
+         
+
+    <div class="table-responsive">
+      {% if domains %}
+      <p></br>此应用可能与以下OFAC制裁名单中的国家/地区通信。</p>
+     <table id="table_ofac" class="table table-bordered table-hover table-striped">
+          <thead>
+          <tr>
+             <th>域名</th>
+             <th>国家/地区</th>
+          </tr>
+         </thead>
+         <tbody>
+         {% for domain, details in domains.items %}
+         {% if details|key:"ofac" == True %}
+          <tr><td>{{domain}}</td>
+          <td>
+            <strong>IP: </strong>{{details|key:"geolocation"|key:"ip"}}  <br/>
+            <strong>国家: </strong>{{details|key:"geolocation"|key:"country_long"}} <br/>
+            <strong>地区: </strong>{{details|key:"geolocation"|key:"region"}} <br/>
+            <strong>城市: </strong>{{details|key:"geolocation"|key:"city"}} <br/>
+          </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+    </table>
+     {% endif %}
+    </div>
+
+  </div>
+  </div><!-- /.card -->
+  </div>
+    <!-- end row -->
+  </div>
+  </div>
+</section>
+
+ <!-- ===========================服务器位置结束================================== -->
+<a id="malware_check" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fab fa-searchengin"></i> 域名恶意软件检查</strong>
+             </p>
+              <div class="table-responsive">
+              {% if domains %} 
+             <table id="table_malware" class="table table-bordered table-hover table-striped">
+                  <thead>
+                  <tr>
+                     <th>域名</th>
+                     <th>状态</th>
+                     <th>地理位置</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                 {% for domain, details in domains.items %}
+                  <tr><td>{{domain}}</td><td> 
+
+                    {% if details|key:"bad" == "yes" %}
+                    <span class="badge bg-danger">恶意软件</span><br/>
+                      <pre>
+                      <strong>URL: </strong>{{details|key:"domain_or_url"}}
+                      <strong>IP: </strong><span class="badge bg-danger">{{details|key:"ip"}}</span>
+                      <strong>描述: </strong>{{details|key:"desc"}}
+                      </pre>
+                  {% else %}
+                    <span class="badge bg-success">正常</span><br/>
+                  {% endif %}
+                  </td>
+                  <td>
+                    {% if details|key:"geolocation" %}
+                      <strong>IP: </strong>{{details|key:"geolocation"|key:"ip"}}  <br/>
+                      <strong>国家: </strong>{{details|key:"geolocation"|key:"country_long"}} <br/>
+                      <strong>地区: </strong>{{details|key:"geolocation"|key:"region"}} <br/>
+                      <strong>城市: </strong>{{details|key:"geolocation"|key:"city"}} <br/>
+                      <strong>纬度: </strong>{{details|key:"geolocation"|key:"latitude"}} <br/>
+                      <strong>经度: </strong>{{details|key:"geolocation"|key:"longitude"}} <br/>
+                      <strong>查看: <a target="_blank" href="http://maps.google.com/maps?q={{details|key:"geolocation"|key:"latitude"}},{{details|key:"geolocation"|key:"longitude"}}">谷歌地图</a>
+                    {% else %}
+                    没有可用的地理位置信息。
+                    {% endif %}
+                  </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+             {% endif %}
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================域名恶意软件检查结束================================== -->
+ <a id="urls" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <p>
+             <strong><i class="fas fa-globe"></i> URL</strong>
+             </p>
+              <div class="table-responsive">
+              {% if urls %} 
+             <table id="table_urls" class="table table-bordered table-hover table-striped">
+                  <thead>
+                  <tr>
+                     <th>URL</th>
+                     <th>文件</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                  {% for urldict in urls %}
+                    <tr>
+                       <td>
+                       {% for u in urldict|key:"urls" %}
+                         {{ u }} <br/>
+                       {% endfor %}
+                        </td>
+
+                       <td>
+                          <a href="{% url "view_source" %}?file={{urldict|key:"path"}}&amp;md5={{ md5}}&amp;type={{app_type}}">{{urldict|key:"path"}}</a>
+                       </td>
+                    </tr>
+                  {% endfor %} 
+                </tbody>
+            </table>
+            {% endif %}
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================URL结束================================== -->
+ <a id="emails" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fas fa-envelope"></i> 电子邮件</strong>
+             </p>
+              <div class="table-responsive">
+                {% if emails %} 
+             <table id="table_emails" class="table table-bordered table-hover table-striped">
+                  <thead>
+                  <tr>
+                     <th>电子邮件</th>
+                     <th>文件</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                 {% for email_dict in emails %}
+                    <tr>
+                       <td>
+                       {% for e in email_dict|key:"emails" %}
+                         {{ e }} <br/>
+                       {% endfor %}
+                        </td>
+                       <td>
+                          <a href="{% url "view_source" %}?file={{email_dict|key:"path"}}&amp;md5={{ md5}}&amp;type={{app_type}}">{{email_dict|key:"path"}}</a>
+                       </td>
+                    </tr>
+                  {% endfor %} 
+                  </tbody>
+            </table>
+              {% endif %}
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================电子邮件结束================================== -->
+{% if app_type not in 'so' %}
+<a id="trackers" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fas fa-user-secret"></i> 跟踪器</strong>
+             </p>
+              <div class="table-responsive">
+              {% if trackers %}
+               <table id="table_trackers" class="table table-bordered table-hover table-striped">
+                <thead>
+                  <tr>
+                    <th>跟踪器名称</th>
+                    <th>类别</th>
+                    <th>URL</th>
+                  </tr>
+                </thead>
+               <tbody>
+                {% for trk in trackers|key:"trackers" %}
+                <tr>
+                  <td>
+                    {{trk.name}}
+                  </td>
+                  <td>
+                    {{trk.categories}}
+                  </td>
+                  <td>
+                    <a target="_blank" href="{{trk.url}}" rel="noopener noreferrer">{{trk.url}}</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+             {% endif %}
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    </div>
+</section>
+ <!-- ===========================跟踪器结束================================== -->
+ {% endif %}
+ <a id="secrets" class="anchor"></a>
+ <section class="content">
+   <div class="container-fluid">
+     <div class="row">
+         <div class="col-lg-12">
+         <div class="card">
+           <div class="card-body">
+              <p>
+              <strong><i class="fas fa-key"></i> 可能的硬编码密钥</strong>
+              </p>
+                <div class="list-group">
+                  {% include 'base/list.html' with list=secrets type="secrets" limit=100 %}
+               </div>
+             </div>
+           </div>
+         </div><!-- /.card -->
+         </div>
+         <!-- end row -->
+         </div>
+ </section>
+  <!-- ===========================密钥结束================================== -->
+<a id="strings" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fas fa-font"></i> 字符串</strong>
+             </p>
+               <div class="list-group">
+              {% if app_type not in 'so' %}
+                  <p><strong>来自APK资源</strong></p>
+                  {% include 'base/list.html' with list=strings.strings_apk_res type="strings" limit=100 %}
+                  <p></p><p><strong>来自代码</strong></p>
+                  {% include 'base/list.html' with list=strings.strings_code type="strings" limit=100 %}
+              {% endif %}
+                    <p></p>
+                    <p><strong>来自共享对象</strong></p>
+                    {% for key, val in strings.items %}
+                      {% if key == 'strings_so' %}
+                        {% for ls in val %}
+                          {% for k,v in ls.items %}
+                          <p></br><strong><i>{{ k }}</i></strong></p>
+                          <div class="list-group">
+                            {% include 'base/list.html' with list=v type="strings" limit=5 %}
+                          </div>
+                          {% endfor %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}                  
+              </div>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+</section>
+ <!-- ===========================字符串结束================================== -->
+ {% if app_type in 'so' %}
+ <a id="symbols" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fa fa-th"></i> 符号</strong>
+             </p>
+               <div class="list-group">
+                {% include 'base/list.html' with list=file_analysis type="symbols" limit=50 %}
+              </div>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+</section>
+ <!-- ===========================符号结束（仅适用于共享对象）================================== -->
+ {% endif %}
+ {% if app_type not in 'so' %}
+ <a id="activities" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fa fa-language"></i> 活动</strong>
+             </p>
+               <div class="list-group">
+                  <p>
+                    {% include 'base/list_href.html' with list=activities type="activities" limit=50 %}            
+                  </p>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+</section>
+ <!-- ===========================活动结束================================== -->
+<a id="services" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fa fa-cogs"></i> 服务</strong>
+             </p>
+               <div class="list-group">
+                  <p>
+                    {% include 'base/list_href.html' with list=services type="services" limit=50 %}
+                  </p>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+</section>
+ <!-- ===========================服务结束================================== -->
+ <a id="receivers" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fa fa-assistive-listening-systems"></i> 接收器</strong>
+             </p>
+               <div class="list-group">
+                  <p>
+                    {% include 'base/list_href.html' with list=receivers type="receivers" limit=50 %}
+                  </p>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+        </div>
+    
+</section>
+ <!-- ===========================接收器结束================================== -->
+  <a id="providers" class="anchor"></a>
+ <section class="content">
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+             <p>
+             <strong><i class="fa fa-database"></i> 提供者</strong>
+             </p>
+               <div class="list-group">
+                  <p>
+                    {% include 'base/list_href.html' with list=providers type="providers" limit=50 %}
+                  </p>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.card -->
+        </div>
+        <!-- end row -->
+    </div>
+</section>
+ <!-- ===========================提供者结束================================== -->
+<a id="libraries" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+            <p>
+            <strong><i class="fab fa-buffer"></i> 库</strong>
+            </p>
+              <div class="list-group">
+                {% include 'base/list.html' with list=libraries type="libraries" limit=100 %}
+            </div>
+          </div>
+        </div>
+      </div><!-- /.card -->
+      </div>
+      <!-- end row -->
+      </div>
+</section>
+ <!-- ===========================库结束================================== -->
+ <a id="sbom" class="anchor"></a>
+ <section class="content">
+   <div class="container-fluid">
+   <div class="row">
+       <div class="col-lg-12">
+       <div class="card">
+         <div class="card-body">
+             <p>
+             <strong><i class="fa fa-archive"></i> 软件物料清单</strong>
+             </p>
+               <div class="list-group">
+                {% if sbom %}
+                 {% include 'base/list.html' with list=sbom.sbom_versioned type="带版本的包" limit=100 %}
+                 {% include 'base/list.html' with list=sbom.sbom_packages type="包" limit=100 %}
+                {% endif %}
+              </div>
+           </div>
+         </div>
+       </div><!-- /.card -->
+       </div>
+       <!-- end row -->
+       </div>
+ </section>
+  <!-- ===========================软件物料清单结束================================== -->
+ <a id="files" class="anchor"></a>
+<section class="content">
+  <div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+            <p>
+            <strong><i class="far fa-copy"></i> 文件</strong>
+            </p>
+              <div class="list-group">
+                {% include 'base/list.html' with list=files type="files" limit=200 %}
+            </div>
+          </div>
+        </div>
+      </div><!-- /.card -->
+      </div>
+      <!-- end row -->
+      </div>
+</section>
+ <!-- ===========================文件结束================================== -->
+ {% endif %}
+<!-- 内容结束 -->
+</div>
+
+<!--模态框-->
+<div class="modal" id="sup_list" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">抑制规则</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="关闭">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table id="sup_table" class="table table-bordered table-hover table-striped">
+          <thead>
+            <tr>
+                <th>抑制类型</th>
+                <th>按规则ID</th>
+                <th>按文件</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+{% endblock %}
+<!--结束新UI-->
+{% block extra_scripts %}
+<!-- DataTables -->
+<script src="{% static "datatables/js/pdfmake.min.js" %}"></script>
+<script src="{% static "datatables/js/vfs_fonts.js" %}"></script>
+<script src="{% static "datatables/js/datatables.combined.min.js" %}"></script>
+<script src="{% static "others/js/datatables_init.js" %}"></script>
+<script src="{% static "amcharts/core.js" %}"></script>
+<script src="{% static "amcharts/maps.js" %}"></script>
+<script src="{% static "amcharts/worldIndiaLow.js" %}"></script>
+<script src="{% static "amcharts/animated.js" %}"></script>
+<script src="{% static "adminlte/plugins/sweetalert2/sweetalert2.min.js" %}"></script>
+<script>
+  var list_suppressions_url = '{% url 'list_suppressions' %}';
+  var suppress_by_files_url = '{% url 'suppress_by_files' %}';
+  var suppress_by_rule_url = '{% url 'suppress_by_rule' %}';
+  var delete_suppression_url = '{% url 'delete_suppression' %}';
+</script>
+<script src="{% static "others/js/suppression.js" %}"></script>
+<style>
+  .left-col {
+    float: left;
+    width: 25%;
+}
+ 
+.center-col {
+    float: left;
+    width: 75%;
+}
+ 
+.right-col {
+    float: left;
+    width: 25%;
+}
+
+</style>
+<script>
+
+  // 移除重新扫描参数
+  window.history.replaceState({}, '', window.location.pathname);
+
+  // 全局变量
+  const csrf = '{{ csrf_token }}'
+  const pkg = '{{ package_name }}'
+  const hash = '{{md5}}'
+
+  // 导航栏激活
+    $(".nav-link").on("click", function() {
+    $(".nav-link").removeClass("active");
+    $(this).addClass("active");
+  });
+
+</script>
+
+
+<script>
+// 主题开始
+am4core.useTheme(am4themes_animated);
+// 主题结束
+
+// 创建地图实例
+var chart = am4core.create("chartdiv", am4maps.MapChart);
+
+// 设置地图定义
+chart.geodata = am4geodata_worldIndiaLow;
+
+// 设置投影
+chart.projection = new am4maps.projections.Miller();
+
+// 创建地图多边形系列
+var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+// 排除南极洲
+polygonSeries.exclude = ["AQ"];
+
+// 使地图从GeoJSON加载多边形（如国家名称）数据
+polygonSeries.useGeodata = true;
+
+// 配置系列
+var polygonTemplate = polygonSeries.mapPolygons.template;
+polygonTemplate.tooltipText = "{name}";
+polygonTemplate.polygon.fillOpacity = 0.6;
+
+// 创建悬停状态并设置替代填充颜色
+var hs = polygonTemplate.states.create("hover");
+hs.properties.fill = chart.colors.getIndex(0);
+
+// 添加图像系列
+var imageSeries = chart.series.push(new am4maps.MapImageSeries());
+imageSeries.mapImages.template.propertyFields.longitude = "longitude";
+imageSeries.mapImages.template.propertyFields.latitude = "latitude";
+imageSeries.mapImages.template.tooltipText = "{title}";
+imageSeries.mapImages.template.propertyFields.url = "url";
+
+var circle = imageSeries.mapImages.template.createChild(am4core.Circle);
+circle.radius = 3;
+circle.propertyFields.fill = "color";
+
+var circle2 = imageSeries.mapImages.template.createChild(am4core.Circle);
+circle2.radius = 3;
+circle2.propertyFields.fill = "color";
+
+
+circle2.events.on("inited", function(event){
+  animateBullet(event.target);
+})
+
+function animateBullet(circle) {
+    var animation = circle.animate([{ property: "scale", from: 1, to: 5 }, { property: "opacity", from: 1, to: 0 }], 1000, am4core.ease.circleOut);
+    animation.events.on("animationended", function(event){
+      animateBullet(event.target.object);
+    })
+}
+
+var colorSet = new am4core.ColorSet();
+imageSeries.data = [
+{% if domains %}
+  {% for domain, details in domains.items %}
+    {% if details|key:"geolocation" %}
+    {
+      'title': '{{details|key:"geolocation"|key:"country_long"}}/{{details|key:"geolocation"|key:"region"}}',
+      'latitude': {{details|key:"geolocation"|key:"latitude"}},
+      'longitude': {{details|key:"geolocation"|key:"longitude"}},
+      'color':colorSet.next()
+    },
+    {% endif %}
+  {% endfor %}
+{% endif %}
+];
+</script>
+
+{% endblock %}
+{% block scan_logs %}
+<table id="scan_logs" class="table table-bordered table-hover table-striped">
+  <thead>
+    <tr>
+        <th>时间戳</th>
+        <th>事件</th>
+        <th>错误</th>
+    </tr>
+  </thead>
+<tbody>
+  {% for log in logs %}
+  <tr>
+    <td>
+      {{log.timestamp}}
+    </td>
+    <td>
+      {{log.status}}
+    </td>
+    <td>
+      {% if not log.exception %}
+      <p class="text-success">
+        正常
+      </p>
+      {% else %}
+      <p class="text-danger">
+      {{log.exception}}
+       </p>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
