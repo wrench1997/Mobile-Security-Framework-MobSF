@@ -114,6 +114,7 @@ export JAVA_HOME=JAVA_HOME=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22
 export PATH=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/root/.local/bin:/usr/bin:/sbin:/bin
 export DJANGO_SUPERUSER_USERNAME=mobsf
 export DJANGO_SUPERUSER_PASSWORD=mobsf
+export MOBSF_JADX_BINARY=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx/jadx-1.5.0/bin
 export MOBSF_HOME_DIR=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF
 
 source $(poetry env info --path)/bin/activate && \
@@ -139,7 +140,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=mobsf
+User=root
 PermissionsStartOnly=true
 ExecStartPre=/bin/mkdir -p /usr/local/863/Mobile-Security-Framework-MobSF/logs
 ExecStartPre=/bin/chown -R mobsf:mobsf /usr/local/863/Mobile-Security-Framework-MobSF
@@ -155,7 +156,7 @@ Environment="PYTHONFAULTHANDLER=1"
 Environment="MOBSF_PLATFORM=local"
 Environment="MOBSF_ADB_BINARY=/usr/bin/adb"
 Environment="JAVA_HOME=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2"
-Environment="PATH=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PATH=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/root/.local/bin:/usr/bin:/sbin:/bin:/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx/jadx-1.5.0/bin"
 Environment="DJANGO_SUPERUSER_USERNAME=mobsf"
 Environment="DJANGO_SUPERUSER_PASSWORD=mobsf"
 Environment="LANG=zh_CN.UTF-8"
