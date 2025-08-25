@@ -140,6 +140,9 @@ After=network.target
 [Service]
 Type=simple
 User=mobsf
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /usr/local/863/Mobile-Security-Framework-MobSF/logs
+ExecStartPre=/bin/chown -R mobsf:mobsf /usr/local/863/Mobile-Security-Framework-MobSF
 WorkingDirectory=/usr/local/863/Mobile-Security-Framework-MobSF
 ExecStart=/usr/local/863/Mobile-Security-Framework-MobSF/start_mobsf.sh
 Restart=on-failure
