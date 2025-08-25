@@ -5,7 +5,7 @@ WKH_FILE=wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
 WKH_FILE_ARM=wkhtmltox_0.12.6.1-3.bookworm_arm64.deb
 
 # 创建 apktool 框架目录
-mkdir -p /home/mobsf/.local/share/apktool/framework
+mkdir -p /usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools
 
 # 根据目标平台选择正确的文件
 if [ "$TARGETPLATFORM" == "linux/arm64" ]
@@ -42,11 +42,11 @@ fi
 # 安装 JADX (从本地文件)
 echo "从本地安装 JADX ..."
 JADX_ZIP="${TOOLS_BIN_PATH}/jadx-1.5.0.zip"
-JADX_DIR="/home/mobsf/.MobSF/tools/jadx/jadx-1.5.0"
+JADX_DIR="/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx/jadx-1.5.0"
 
 if [ -f "${JADX_ZIP}" ]; then
     # 创建目标目录
-    mkdir -p "/home/mobsf/.MobSF/tools/jadx"
+    mkdir -p "/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx"
     
     # 解压 JADX
     unzip -q "${JADX_ZIP}" -d "${JADX_DIR}"

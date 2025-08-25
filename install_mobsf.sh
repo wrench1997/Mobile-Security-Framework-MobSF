@@ -5,22 +5,7 @@ set -e
 
 echo "开始安装 Mobile Security Framework (MobSF)..."
 
-# 设置环境变量
-export DEBIAN_FRONTEND=noninteractive
-export LANG=zh_CN.UTF-8
-export LANGUAGE=zh_CN:zh
-export LC_ALL=zh_CN.UTF-8
-export PYTHONUNBUFFERED=1
-export PYTHONDONTWRITEBYTECODE=1
-export PYTHONFAULTHANDLER=1
-export MOBSF_USER=mobsf
-export USER_ID=9901
-export MOBSF_PLATFORM=local
-export MOBSF_ADB_BINARY=/usr/bin/adb
-export JAVA_HOME=/jdk-22.0.2
-export PATH=/jdk-22.0.2/bin:$HOME/.local/bin:$PATH
-export DJANGO_SUPERUSER_USERNAME=mobsf
-export DJANGO_SUPERUSER_PASSWORD=mobsf
+
 
 # 安装系统依赖
 # echo "安装系统依赖..."
@@ -62,7 +47,9 @@ export DJANGO_SUPERUSER_PASSWORD=mobsf
 
 # 创建工作目录
 WORK_DIR="/usr/local/863/Mobile-Security-Framework-MobSF"
+rm -rf $WORK_DIR
 mkdir -p $WORK_DIR
+mkdir -p $WORK_DIR/.MOBSF
 
 # 拷贝必要文件到工作目录
 echo "拷贝必要文件到工作目录..."
@@ -73,6 +60,7 @@ cp install_mobsf.sh $WORK_DIR/
 cp manage.py $WORK_DIR/
 cp poetry.lock $WORK_DIR/
 cp pyproject.toml $WORK_DIR/
+cp README.md $WORK_DIR/
 
 # 切换到工作目录
 cd $WORK_DIR
@@ -87,10 +75,8 @@ bash scripts/dependencies.sh
 
 # 安装 Python 依赖
 echo "安装 Python 依赖..."
-poetry config virtualenvs.create false
-poetry lock
-poetry install --only main --no-root --no-interaction --no-ansi
-poetry cache clear . --all --no-interaction
+poetry config virtualenvs.create true
+poetry install
 
 # # 清理
 # echo "清理系统..."
@@ -108,11 +94,38 @@ sudo groupadd --gid $USER_ID $MOBSF_USER || true
 sudo useradd $MOBSF_USER --uid $USER_ID --gid $MOBSF_USER --shell /bin/false --create-home || true
 sudo chown -R $MOBSF_USER:$MOBSF_USER $WORK_DIR
 
+
+# export MOBSF_SECRET_KEY=0d)rnfj(f1(sc)4g-k**p)vxad6$*par!=)5urn*0xk9m)=4ns 这个在源代码里面固定死了，所以改不改变量一样
 # 创建启动脚本
 cat > $WORK_DIR/start_mobsf.sh << 'EOF'
 #!/bin/bash
-cd $HOME/Mobile-Security-Framework-MobSF
-python3 manage.py runserver 0.0.0.0:8000
+export DEBIAN_FRONTEND=noninteractive
+export LANG=zh_CN.UTF-8
+export LANGUAGE=zh_CN:zh
+export LC_ALL=zh_CN.UTF-8
+export PYTHONUNBUFFERED=1
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONFAULTHANDLER=1
+export MOBSF_USER=mobsf
+export USER_ID=9901
+export MOBSF_PLATFORM=local
+export MOBSF_ADB_BINARY=/usr/bin/adb
+export JAVA_HOME=JAVA_HOME=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2
+export PATH=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/root/.local/bin:/usr/bin:/sbin:/bin
+export DJANGO_SUPERUSER_USERNAME=mobsf
+export DJANGO_SUPERUSER_PASSWORD=mobsf
+export MOBSF_HOME_DIR=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF
+
+source $(poetry env info --path)/bin/activate && \
+python3 manage.py makemigrations StaticAnalyzer && \
+python3 manage.py migrate
+set +e
+python3 manage.py createsuperuser --noinput --email ""
+set -e
+python3 manage.py create_roles
+
+exec gunicorn -b 0.0.0.0:8000 "mobsf.MobSF.wsgi:application" --workers=1 --threads=10 --timeout=3600 \
+    --worker-tmp-dir=/dev/shm --log-level=citical --log-file=- --access-logfile=- --error-logfile=- --capture-output
 EOF
 
 chmod +x $WORK_DIR/start_mobsf.sh
@@ -127,22 +140,25 @@ After=network.target
 [Service]
 Type=simple
 User=mobsf
-WorkingDirectory=/home/mobsf/Mobile-Security-Framework-MobSF
-ExecStart=/home/mobsf/Mobile-Security-Framework-MobSF/start_mobsf.sh
+WorkingDirectory=/usr/local/863/Mobile-Security-Framework-MobSF
+ExecStart=/usr/local/863/Mobile-Security-Framework-MobSF/start_mobsf.sh
 Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=300
 # 添加环境变量
 Environment="PYTHONUNBUFFERED=1"
 Environment="PYTHONDONTWRITEBYTECODE=1"
 Environment="PYTHONFAULTHANDLER=1"
 Environment="MOBSF_PLATFORM=local"
 Environment="MOBSF_ADB_BINARY=/usr/bin/adb"
-Environment="JAVA_HOME=/jdk-22.0.2"
-Environment="PATH=/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="JAVA_HOME=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2"
+Environment="PATH=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 Environment="DJANGO_SUPERUSER_USERNAME=mobsf"
 Environment="DJANGO_SUPERUSER_PASSWORD=mobsf"
 Environment="LANG=zh_CN.UTF-8"
 Environment="LANGUAGE=zh_CN:zh"
 Environment="LC_ALL=zh_CN.UTF-8"
+Environment="MOBSF_HOME_DIR=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF"
 
 [Install]
 WantedBy=multi-user.target
@@ -151,6 +167,7 @@ EOF
 sudo mv /tmp/mobsf.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable mobsf.service
+sudo systemctl restart mobsf.service
 
 
 echo "MobSF 安装完成！"

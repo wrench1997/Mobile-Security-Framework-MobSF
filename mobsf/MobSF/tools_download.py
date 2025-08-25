@@ -132,10 +132,10 @@ def download_file(url, file_path):
 
 
 def install_jadx(mobsf_home, version='1.5.0'):
-    """Install JADX dynamically."""
+    """Install JADX from local zip file."""
     try:
-        url = ('https://github.com/skylot/jadx/releases/download/'
-               f'v{version}/jadx-{version}.zip')
+        # 使用本地目录下的 jadx 压缩文件
+        local_zip_path = Path(mobsf_home).parent / 'tools_bin' / f'jadx-{version}.zip'
         jadx_dir = Path(mobsf_home) / 'tools' / 'jadx'
         extract_dir = jadx_dir / f'jadx-{version}'
 
@@ -143,33 +143,29 @@ def install_jadx(mobsf_home, version='1.5.0'):
             logger.info('JADX is already installed at %s', extract_dir)
             return
 
-        logger.info('Downloading JADX from %s', url)
+        # 检查本地文件是否存在
+        if not local_zip_path.exists():
+            logger.error('Local JADX zip file not found at %s', local_zip_path)
+            return
+
+        logger.info('Using local JADX zip file from %s', local_zip_path)
         shutil.rmtree(jadx_dir, ignore_errors=True)
 
-        with tempfile.NamedTemporaryFile(
-                delete=False,
-                mode='wb',
-                suffix='.zip') as tmp_zip_file:
+        # 创建目标目录
+        extract_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 直接从本地文件解压
+        logger.info('Extracting JADX to %s', extract_dir)
+        with zipfile.ZipFile(local_zip_path, 'r') as zip_ref:
+            for member in zip_ref.namelist():
+                zip_ref.extract(member, extract_dir)
 
-            downloaded_size = download_file(url, tmp_zip_file.name)
-            logger.info('JADX download complete. File size: %d bytes', downloaded_size)
-
-            # Extract the zip file
-            logger.info('Extracting JADX to %s', extract_dir)
-            extract_dir.mkdir(parents=True, exist_ok=True)
-            with zipfile.ZipFile(tmp_zip_file.name, 'r') as zip_ref:
-                for member in zip_ref.namelist():
-                    zip_ref.extract(member, extract_dir)
-
-        # Set execute permission
+        # 设置执行权限
         set_rwxr_xr_x_permission_recursively(extract_dir)
 
-        logger.info('JADX installed successfully')
+        logger.info('JADX installed successfully from local file')
     except Exception:
         logger.exception('Error during JADX installation')
-    finally:
-        if 'tmp_zip_file' in locals():
-            Path(tmp_zip_file.name).unlink()
 
 
 def set_rwxr_xr_x_permission_recursively(directory_path):

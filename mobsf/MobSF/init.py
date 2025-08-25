@@ -35,9 +35,9 @@ def first_run(secret_file, base_dir, mobsf_home):
     mobsf_home = Path(mobsf_home)
     secret_file = Path(secret_file)
     if os.getenv('MOBSF_SECRET_KEY'):
-        secret_key = os.environ['MOBSF_SECRET_KEY']
+        secret_key = "0d)rnfj(f1(sc)4g-k**p)vxad6$*par!=)5urn*0xk9m)=4ns" #固定死
     elif secret_file.exists() and secret_file.is_file():
-        secret_key = secret_file.read_text().strip()
+        secret_key = "0d)rnfj(f1(sc)4g-k**p)vxad6$*par!=)5urn*0xk9m)=4ns" #固定死
     else:
         try:
             secret_key = get_random()
