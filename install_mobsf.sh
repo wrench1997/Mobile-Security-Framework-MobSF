@@ -110,11 +110,11 @@ export MOBSF_USER=mobsf
 export USER_ID=9901
 export MOBSF_PLATFORM=local
 export MOBSF_ADB_BINARY=/usr/bin/adb
-export JAVA_HOME=JAVA_HOME=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2
+export JAVA_HOME=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2
 export PATH=/usr/local/863/Mobile-Security-Framework-MobSF/jdk-22.0.2/bin:/home/mobsf/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/root/.local/bin:/usr/bin:/sbin:/bin
 export DJANGO_SUPERUSER_USERNAME=mobsf
 export DJANGO_SUPERUSER_PASSWORD=mobsf
-export MOBSF_JADX_BINARY=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx/jadx-1.5.0/bin
+export MOBSF_JADX_BINARY=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx/jadx-1.5.0/bin/jadx
 export MOBSF_HOME_DIR=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF
 
 source $(poetry env info --path)/bin/activate && \
