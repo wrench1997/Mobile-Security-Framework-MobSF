@@ -71,7 +71,7 @@ cd $WORK_DIR
 
 # 运行依赖安装脚本
 echo "安装 wkhtmltopdf, OpenJDK 和 jadx..."
-bash ./scripts/dependencies.sh
+bash scripts/dependencies.sh
 
 # 安装 Python 依赖
 echo "安装 Python 依赖..."
