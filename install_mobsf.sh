@@ -61,8 +61,20 @@ export DJANGO_SUPERUSER_PASSWORD=mobsf
 # sudo apt autoremove -y && sudo apt clean -y
 
 # 创建工作目录
-WORK_DIR="/usr/local/863/bin/Mobile-Security-Framework-MobSF"
+WORK_DIR="/usr/local/863/Mobile-Security-Framework-MobSF"
 mkdir -p $WORK_DIR
+
+# 拷贝必要文件到工作目录
+echo "拷贝必要文件到工作目录..."
+cp -r mobsf $WORK_DIR/
+cp -r scripts $WORK_DIR/
+cp -r tools_bin $WORK_DIR/
+cp install_mobsf.sh $WORK_DIR/
+cp manage.py $WORK_DIR/
+cp poetry.lock $WORK_DIR/
+cp pyproject.toml $WORK_DIR/
+
+# 切换到工作目录
 cd $WORK_DIR
 
 # # 克隆 MobSF 仓库
