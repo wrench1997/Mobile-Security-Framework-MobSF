@@ -89,10 +89,10 @@ poetry install
 # sudo apt autoremove -y
 
 # 创建 mobsf 用户
-echo "创建 mobsf 用户..."
-sudo groupadd --gid $USER_ID $MOBSF_USER || true
-sudo useradd $MOBSF_USER --uid $USER_ID --gid $MOBSF_USER --shell /bin/false --create-home || true
-sudo chown -R $MOBSF_USER:$MOBSF_USER $WORK_DIR
+# echo "创建 mobsf 用户..."
+# sudo groupadd --gid $USER_ID $MOBSF_USER || true
+# sudo useradd $MOBSF_USER --uid $USER_ID --gid $MOBSF_USER --shell /bin/false --create-home || true
+# sudo chown -R $MOBSF_USER:$MOBSF_USER $WORK_DIR
 
 
 # export MOBSF_SECRET_KEY=0d)rnfj(f1(sc)4g-k**p)vxad6$*par!=)5urn*0xk9m)=4ns 这个在源代码里面固定死了，所以改不改变量一样
@@ -116,6 +116,7 @@ export DJANGO_SUPERUSER_USERNAME=mobsf
 export DJANGO_SUPERUSER_PASSWORD=mobsf
 export MOBSF_JADX_BINARY=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF/tools/jadx/jadx-1.5.0/bin/jadx
 export MOBSF_HOME_DIR=/usr/local/863/Mobile-Security-Framework-MobSF/.MOBSF
+export MOBSF_API_KEY=4154386320cab110d7b8bf4d5475b3cde8833fea0045cb1768c11ddee838395a
 
 source $(poetry env info --path)/bin/activate && \
 python3 manage.py makemigrations StaticAnalyzer && \
@@ -142,8 +143,6 @@ After=network.target
 Type=simple
 User=root
 PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p /usr/local/863/Mobile-Security-Framework-MobSF/logs
-ExecStartPre=/bin/chown -R mobsf:mobsf /usr/local/863/Mobile-Security-Framework-MobSF
 WorkingDirectory=/usr/local/863/Mobile-Security-Framework-MobSF
 ExecStart=/usr/local/863/Mobile-Security-Framework-MobSF/start_mobsf.sh
 Restart=on-failure
