@@ -8,9 +8,9 @@ INFO = 'info'
 STDS = get_standards()
 IPA_RULES = [
     {
-        'description': 'Binary makes use of insecure API(s)',
+        'description': '二进制文件使用了不安全的API',
         'detailed_desc': (
-            'The binary may contain the following insecure API(s) {}'),
+            '该二进制文件可能包含以下不安全的API：{}'),
         'type': 'Regex',
         'pattern': (
             rb'\b_alloca\n\b|\b_gets\n\b|\b_memcpy\n\b|\b_printf\n\b|'
@@ -30,9 +30,9 @@ IPA_RULES = [
         'masvs': STDS['masvs']['code-8'],
     },
     {
-        'description': 'Binary makes use of some weak Crypto API(s)',
+        'description': '二进制文件使用了一些弱加密API',
         'detailed_desc': (
-            'The binary may use the following weak crypto API(s) {}'),
+            '该二进制文件可能使用了以下弱加密API：{}'),
         'type': 'Regex',
         'pattern': (
             rb'\bkCCAlgorithmDES\b|'
@@ -49,9 +49,9 @@ IPA_RULES = [
         'masvs': STDS['masvs']['crypto-3'],
     },
     {
-        'description': 'Binary makes use of the following Crypto API(s)',
+        'description': '二进制文件使用了以下加密API',
         'detailed_desc': (
-            'The binary may use the following crypto API(s) {}'),
+            '该二进制文件可能使用了以下加密API：{}'),
         'type': 'Regex',
         'pattern': (
             rb'\bCCKeyDerivationPBKDF\b|\bCCCryptorCreate\b|\b'
@@ -98,9 +98,9 @@ IPA_RULES = [
         'masvs': '',
     },
     {
-        'description': 'Binary makes use of some weak Hashing API(s)',
+        'description': '二进制文件使用了一些弱哈希API',
         'detailed_desc': (
-            'The binary may use the following weak hash API(s) {}'),
+            '该二进制文件可能使用了以下弱哈希API：{}'),
         'type': 'Regex',
         'pattern': (
             rb'\bCC_MD2_Init\b|\bCC_MD2_Update\b|\b'
@@ -123,9 +123,9 @@ IPA_RULES = [
         'masvs': STDS['masvs']['crypto-4'],
     },
     {
-        'description': 'Binary makes use of the following Hash API(s)',
+        'description': '二进制文件使用了以下哈希API',
         'detailed_desc': (
-            'The binary may use the following hash API(s) {}'),
+            '该二进制文件可能使用了以下哈希API：{}'),
         'type': 'Regex',
         'pattern': (
             rb'\bCC_SHA224_Init\b|\bCC_SHA224_Update\b|\b'
@@ -150,10 +150,10 @@ IPA_RULES = [
         'masvs': '',
     },
     {
-        'description': 'Binary makes use of the insecure Random function(s)',
+        'description': '二进制文件使用了不安全的随机函数',
         'detailed_desc': (
-            'The binary may use the following '
-            'insecure Random function(s) {}'),
+            '该二进制文件可能使用了以下'
+            '不安全的随机函数：{}'),
         'type': 'Regex',
         'pattern': rb'\b_srand\n\b|\b_random\n\b',
         'severity': WARNING,
@@ -164,9 +164,9 @@ IPA_RULES = [
         'masvs': STDS['masvs']['crypto-6'],
     },
     {
-        'description': 'Binary makes use of Logging function',
+        'description': '二进制文件使用了日志记录函数',
         'detailed_desc': (
-            'The binary may use {} function for logging.'),
+            '该二进制文件可能使用了{}函数进行日志记录。'),
         'type': 'Regex',
         'pattern': rb'\b_NSLog\n\b',
         'severity': INFO,
@@ -177,9 +177,9 @@ IPA_RULES = [
         'masvs': STDS['masvs']['storage-3'],
     },
     {
-        'description': 'Binary makes use of malloc function',
+        'description': '二进制文件使用了malloc函数',
         'detailed_desc': (
-            'The binary may use {} function instead of calloc'),
+            '该二进制文件可能使用了{}函数而不是calloc'),
         'type': 'Regex',
         'pattern': rb'_malloc\n',
         'severity': WARNING,
@@ -190,13 +190,12 @@ IPA_RULES = [
         'masvs': STDS['masvs']['code-8'],
     },
     {
-        'description': 'Binary calls ptrace() function for anti-debugging.',
+        'description': '二进制文件调用ptrace()函数进行反调试',
         'detailed_desc': (
-            'The binary may use ptrace() function. It can be'
-            ' used to detect and prevent debuggers.'
-            ' Ptrace is not a public API and apps that'
-            ' use non-public APIs will be rejected'
-            ' from AppStore.'),
+            '该二进制文件可能使用了ptrace()函数。它可以'
+            '用于检测和防止调试器。'
+            'Ptrace不是公开API，使用非公开API的应用'
+            '将被AppStore拒绝。'),
         'type': 'Regex',
         'pattern': rb'\b_ptrace\b',
         'severity': WARNING,
@@ -207,8 +206,8 @@ IPA_RULES = [
         'masvs': STDS['masvs']['resilience-2'],
     },
     {
-        'description': 'Binary uses WebView Component.',
-        'detailed_desc': 'The binary may use UIWebView Component.',
+        'description': '二进制文件使用了WebView组件',
+        'detailed_desc': '该二进制文件可能使用了UIWebView组件。',
         'type': 'Regex',
         'pattern': b'UIWebView',
         'severity': INFO,

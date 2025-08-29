@@ -8,77 +8,75 @@ logger = logging.getLogger(__name__)
 
 COCOA_KEYS = {
     'NETestAppMapping': (
-        ('Enables testing of per-app VPN app extensions '
-         'without using an MDM server.'),
+        ('允许在不使用MDM服务器的情况下测试每个应用的VPN应用扩展。'),
         'normal'),
     'NFCReaderUsageDescription': (
-        'Access device\'s NFC reader.',
+        '访问设备的NFC读取器。',
         'dangerous'),
     'NSAppleMusicUsageDescription': (
-        'Access Apple Media Library.',
+        '访问苹果媒体库。',
         'dangerous'),
     'NSBluetoothPeripheralUsageDescription': (
-        'Access Bluetooth Interface.',
+        '访问蓝牙接口。',
         'dangerous'),
     'NSCalendarsUsageDescription': (
-        'Access Calendars.',
+        '访问日历。',
         'dangerous'),
     'NSCameraUsageDescription': (
-        'Access the Camera.',
+        '访问相机。',
         'dangerous'),
     'NSContactsUsageDescription': (
-        'Access Contacts.',
+        '访问联系人。',
         'dangerous'),
     'NSFaceIDUsageDescription': (
-        'Access the ability to authenticate with Face ID.',
+        '访问Face ID认证功能。',
         'normal'),
     'NSHealthClinicalHealthRecordsShareUsageDescription': (
-        'Access user\'s clinical health records.',
+        '访问用户的临床健康记录。',
         'dangerous'),
     'NSHealthShareUsageDescription': (
-        'Read Health Data.',
+        '读取健康数据。',
         'dangerous'),
     'NSHealthUpdateUsageDescription': (
-        'Write Health Data.',
+        '写入健康数据。',
         'dangerous'),
     'NSHomeKitUsageDescription': (
-        'Access HomeKit configuration data.',
+        '访问HomeKit配置数据。',
         'dangerous'),
     'NSLocationAlwaysUsageDescription': (
-        'Access location information at all times.',
+        '随时访问位置信息。',
         'dangerous'),
     'NSLocationUsageDescription': (
-        'Access location information at all times (< iOS 8).',
+        '随时访问位置信息（iOS 8以下版本）。',
         'dangerous'),
     'NSLocationWhenInUseUsageDescription': (
-        'Access location information when app is in the foreground.',
+        '在应用前台运行时访问位置信息。',
         'dangerous'),
     'NSMicrophoneUsageDescription': (
-        'Access microphone.',
+        '访问麦克风。',
         'dangerous'),
     'NSMotionUsageDescription': (
-        'Access the device\'s accelerometer.',
+        '访问设备的加速度计。',
         'dangerous'),
     'NSPhotoLibraryUsageDescription': (
-        'Access the user\'s photo library.',
+        '访问用户的照片库。',
         'dangerous'),
     'NSRemindersUsageDescription': (
-        'Access the user\'s reminders.',
+        '访问用户的提醒事项。',
         'dangerous'),
     'NSSiriUsageDescription': (
-        'Allow app to send user data to Siri',
+        '允许应用向Siri发送用户数据',
         'dangerous'),
     'NSSpeechRecognitionUsageDescription': (
-        'Allow app to send user data to Apple\'s speech recognition servers.',
+        '允许应用向苹果的语音识别服务器发送用户数据。',
         'normal'),
     'NSVideoSubscriberAccountUsageDescription': (
-        'Access the user\'s TV provider account.',
+        '访问用户的电视提供商账户。',
         'normal'),
     'NSLocalNetworkUsageDescription': (
-        'Allow app to request access to the local network.',
+        '允许应用请求访问本地网络。',
         'normnal'),
 }
-
 
 def check_permissions(p_list):
     """Check the permissions the app requests."""

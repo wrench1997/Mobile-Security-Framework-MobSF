@@ -95,12 +95,11 @@ poetry install
 # sudo chown -R $MOBSF_USER:$MOBSF_USER $WORK_DIR
 
 
-# export MOBSF_SECRET_KEY=0d)rnfj(f1(sc)4g-k**p)vxad6$*par!=)5urn*0xk9m)=4ns 这个在源代码里面固定死了，所以改不改变量一样
 # 创建启动脚本
 cat > $WORK_DIR/start_mobsf.sh << 'EOF'
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
-export LANG=zh_CN.UTF-8
+export LANG=zh_CN.UTF-8 
 export LANGUAGE=zh_CN:zh
 export LC_ALL=zh_CN.UTF-8
 export PYTHONUNBUFFERED=1
@@ -179,3 +178,5 @@ echo "sudo systemctl start mobsf"
 echo "然后访问 http://localhost:8000 使用 MobSF"
 echo "默认用户名: mobsf"
 echo "默认密码: mobsf"
+
+
