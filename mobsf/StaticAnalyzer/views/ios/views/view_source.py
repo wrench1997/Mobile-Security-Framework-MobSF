@@ -84,7 +84,7 @@ def run(request, api=False):
         sfile = src / fil
         sfile = sfile.as_posix()
         if not is_safe_path(src, sfile):
-            msg = 'Path Traversal Detected!'
+            msg = '反射路径发现!' # Path Traversal Detected!
             if api:
                 return {'error': 'Path Traversal Detected!'}
             return print_n_send_error_response(request, msg, False, exp)

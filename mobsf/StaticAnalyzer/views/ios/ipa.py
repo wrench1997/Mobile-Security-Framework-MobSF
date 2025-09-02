@@ -86,7 +86,7 @@ def get_size_and_hashes(app_dic):
 def extract_and_check_ipa(checksum, app_dic):
     """Extract and Check IPA."""
     # EXTRACT IPA
-    msg = 'Extracting IPA'
+    msg = '提取 IPA'
     logger.info(msg)
     append_scan_status(checksum, msg)
     unzip(
@@ -172,13 +172,13 @@ def ipa_analysis_task(checksum, app_dic, rescan, queue=False):
             settings.ASYNC_ANALYSIS = True
             mark_task_started(checksum)
         append_scan_status(checksum, 'init')
-        msg = 'iOS Binary (IPA) Analysis Started'
+        msg = 'iOS 二进制程序 (IPA) 分析开始'
         logger.info(msg)
         append_scan_status(checksum, msg)
         get_size_and_hashes(app_dic)
 
         if not extract_and_check_ipa(checksum, app_dic):
-            msg = ('IPA is malformed! MobSF cannot find Payload directory')
+            msg = ('IPA 格式错误！MobSF 找不到 Payload 目录')
             append_scan_status(checksum, 'IPA is malformed', msg)
             if queue:
                 return mark_task_completed(
