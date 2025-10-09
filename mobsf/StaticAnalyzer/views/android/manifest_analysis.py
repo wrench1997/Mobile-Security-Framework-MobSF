@@ -798,17 +798,39 @@ def manifest_analysis(app_dic, man_data_dic):
                 if int(value) > 100:
                     ret_list.append(
                         ('high_action_priority_found', (value,), ()))
+                    
         for a_key, t_name, t_desc in ret_list:
             a_template = android_manifest_desc.MANIFEST_DESC.get(a_key)
             if a_template:
-                ret_value.append({
-                    'rule': a_key,
-                    'title': a_template['title'] % t_name,
-                    'severity': a_template['level'],
-                    'description': a_template['description'] % t_desc,
-                    'name': a_template['name'] % t_name,
-                    'component': t_name,
-                })
+                # 确保 t_name 是元组，如果不是则转换为元组
+                t_name_tuple = t_name if isinstance(t_name, tuple) else (t_name,)
+                
+                try:
+                    # 尝试格式化字符串
+                    title = a_template['title'] % t_name_tuple
+                    description = a_template['description'] % t_desc
+                    name = a_template['name'] % t_name_tuple
+                    
+                    ret_value.append({
+                        'rule': a_key,
+                        'title': title,
+                        'severity': a_template['level'],
+                        'description': description,
+                        'name': name,
+                        'component': t_name_tuple[0] if t_name_tuple else '',
+                    })
+                except TypeError as e:
+                    # 记录错误并使用安全的默认值
+                    logger.error(f"String formatting error for key '{a_key}': {str(e)}")
+                    # 可以选择使用未格式化的模板或其他默认值
+                    ret_value.append({
+                        'rule': a_key,
+                        'title': a_template['title'],  # 未格式化
+                        'severity': a_template['level'],
+                        'description': str(t_desc),  # 直接使用描述
+                        'name': a_template['name'],  # 未格式化
+                        'component': str(t_name) if t_name else '',
+                    })
             else:
                 logger.warning("No template found for key '%s'", a_key)
 
